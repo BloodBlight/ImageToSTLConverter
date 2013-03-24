@@ -561,11 +561,41 @@
                         .intZ3 = intHeights(X - 1, Y - 1)
                     End With
                     WriteTriangle(objTriangle, objFile)
-                End If
 
+                    If bitDoBase Then
+                        'Lets do a simple base...
+                        objTriangleC += 1
+                        With objTriangle
+                            .intX1 = X * dblScaleX
+                            .intY1 = Y * dblScaleY
+                            .intZ1 = 0
 
-                If bitDoBase Then
+                            .intX2 = X * dblScaleX
+                            .intY2 = (Y - 1) * dblScaleY
+                            .intZ2 = 0
 
+                            .intX3 = (X - 1) * dblScaleX
+                            .intY3 = (Y - 1) * dblScaleY
+                            .intZ3 = 0
+                        End With
+                        WriteTriangle(objTriangle, objFile)
+
+                        objTriangleC += 1
+                        With objTriangle
+                            .intX1 = X * dblScaleX
+                            .intY1 = Y * dblScaleY
+                            .intZ1 = 0
+
+                            .intX2 = (X - 1) * dblScaleX
+                            .intY2 = (Y - 1) * dblScaleY
+                            .intZ2 = 0
+
+                            .intX3 = (X - 1) * dblScaleX
+                            .intY3 = Y * dblScaleY
+                            .intZ3 = 0
+                        End With
+                        WriteTriangle(objTriangle, objFile)
+                    End If
                 End If
             Next
         Next

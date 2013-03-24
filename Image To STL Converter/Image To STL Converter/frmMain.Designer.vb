@@ -141,9 +141,9 @@ Partial Class frmMain
         Me.Label3.AutoSize = True
         Me.Label3.Location = New System.Drawing.Point(1000, 227)
         Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(123, 13)
+        Me.Label3.Size = New System.Drawing.Size(117, 13)
         Me.Label3.TabIndex = 12
-        Me.Label3.Text = "Add Base Boarder (MM):"
+        Me.Label3.Text = "Add Base Border (MM):"
         '
         'txtBase
         '
