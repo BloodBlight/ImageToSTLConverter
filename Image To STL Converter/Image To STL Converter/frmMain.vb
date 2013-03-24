@@ -325,12 +325,6 @@
             Else
                 txtBaseBoarder.Enabled = False
             End If
-
-            If Val(.Text) + Val(txtZ.Text) > 255 Then
-                MessageBox.Show("(Base Height + Image Height) Cannot exceed 255.  Correcting value!", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                .Text = 255 - Val(txtZ.Text)
-                .SelectionStart = .Text.Length
-            End If
         End With
     End Sub
 
@@ -396,11 +390,6 @@
     Private Sub txtZ_TextChanged(sender As Object, e As EventArgs) Handles txtZ.TextChanged
         With txtZ
             If SafeNumber(.Text) Then
-                .SelectionStart = .Text.Length
-            End If
-            If Val(.Text) + Val(txtBase.Text) > 255 Then
-                MessageBox.Show("(Base Height + Image Height) Cannot exceed 255.  Correcting value!", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                .Text = 255 - Val(txtBase.Text)
                 .SelectionStart = .Text.Length
             End If
         End With
