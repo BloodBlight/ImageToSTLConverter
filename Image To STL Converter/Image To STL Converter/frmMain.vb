@@ -1,8 +1,8 @@
 ﻿Public Class frmMain
     Structure Triangle
-        Dim intXN As Single
-        Dim intYN As Single
-        Dim intZN As Single
+        'Dim intXN As Single
+        'Dim intYN As Single
+        'Dim intZN As Single
         Dim intX1 As Single
         Dim intY1 As Single
         Dim intZ1 As Single
@@ -12,14 +12,19 @@
         Dim intX3 As Single
         Dim intY3 As Single
         Dim intZ3 As Single
-        Dim intABC As UInt16
+        'Dim intABC As UInt16
     End Structure
+
+
+    Const conEmptySingle As Single = 0
+    Const conEmptyUInt16 As UInt16 = 0
 
     Dim bitUpdateNeeded As Boolean = True
     Dim bitWorking As Boolean = False
     Dim bitBinMode As Boolean = True
     Dim bitUpdateingSize As Boolean = False
 
+    Dim intErrorCount As UInt16 = 0
 
     Private Sub picSource_Click(sender As Object, e As EventArgs) Handles picSource.Click
 
@@ -43,6 +48,7 @@
 
     Sub LoadImage(Optional ByRef strFileName As String = "")
         If strFileName <> "" Then
+            picSource.Load(strFileName)
         End If
 
         Dim X As Integer = picSource.Image.Width
@@ -56,12 +62,37 @@
             txtX.Text = X / Y * 200
         End If
         bitUpdateingSize = False
+        bitUpdateNeeded = True
     End Sub
 
 
     Private Sub cmdCreate_Click(sender As Object, e As EventArgs) Handles cmdCreate.Click
-        CreateSTLFile()
-        Beep()
+        SetFormMode(False)
+        Application.DoEvents()
+        If chkSpike.Checked = False Then
+            Dim objResult As DialogResult = MessageBox.Show("The spike filter is NOT on, would you like to run that now?", "Spike Filter", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question)
+            If objResult = Windows.Forms.DialogResult.Cancel Then
+                SetFormMode(True)
+                Exit Sub
+            ElseIf objResult = Windows.Forms.DialogResult.Yes Then
+                chkSpike.Checked = True
+                bitUpdateNeeded = True
+                Do While bitUpdateNeeded
+                    Application.DoEvents()
+                Loop
+            End If
+        End If
+        Dim objOF As New Windows.Forms.SaveFileDialog
+        With objOF
+            .Filter = "STL File (*.stl)|*.stl"
+            .AddExtension = True
+            .DefaultExt = "stl"
+            If .ShowDialog() = Windows.Forms.DialogResult.OK Then
+                CreateSTLFile(.FileName)
+                MessageBox.Show("Done!", "STL File Export", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            End If
+        End With
+        SetFormMode(True)
     End Sub
 
 
@@ -74,142 +105,189 @@
         If bitWorking Then
             If picDest.BorderStyle = BorderStyle.None Then
                 picDest.BorderStyle = BorderStyle.FixedSingle
+                If chkSpike.Checked Then
+                    lblSpike.Visible = True
+                End If
             Else
                 picDest.BorderStyle = BorderStyle.None
+                If chkSpike.Checked Then
+                    lblSpike.Visible = False
+                End If
             End If
         ElseIf bitUpdateNeeded Then
-            bitUpdateNeeded = False
-            bitWorking = True
-            cmdCreate.Enabled = False
-            picDest.BorderStyle = BorderStyle.None
+            Try
 
-            Application.DoEvents()
+                bitUpdateNeeded = False
+                bitWorking = True
+                cmdCreate.Enabled = False
+                picDest.BorderStyle = BorderStyle.None
 
-            Dim X As Integer
-            Dim Y As Integer
+                Application.DoEvents()
 
-            Dim dblImageZ As Double = Val(txtZ.Text)
-            Dim dblBaseZ As Double = Val(txtBase.Text)
+                Dim X As Integer
+                Dim Y As Integer
 
-            Dim intBaseZC As UInt16 = 255 - 255 / (dblImageZ + dblBaseZ) * dblBaseZ
-            Dim dblImageZRatio As Double = (intBaseZC) / 255
+                'Dim dblImageZ As Double = Val(txtZ.Text)
+                'Dim dblBaseZ As Double = Val(txtBase.Text)
 
-            Dim intImageWidth As Integer = picSource.Image.Size.Width
-            Dim intImageHeight As Integer = picSource.Image.Size.Height
-            Dim bitDoBW As Boolean = chkBW.Checked
+                'Dim intBaseZC As UInt16 = 255 - 255 / (dblImageZ + dblBaseZ) * dblBaseZ
+                'Dim dblImageZRatio As Double = (intBaseZC) / 255
 
-            'Dim objPic As System.Drawing.Image
-            Dim objSource As New System.Drawing.Bitmap(intImageWidth, intImageHeight)
-            Dim objTarget As New System.Drawing.Bitmap(picSource.Image.Size.Width, picSource.Image.Size.Height)
-            Dim objColor As System.Drawing.Color
-            Dim intNewGray As UInt16
-            Dim intThresh As Integer = tbBWTH.Value
+                Dim intImageWidth As Integer = picSource.Image.Size.Width
+                Dim intImageHeight As Integer = picSource.Image.Size.Height
+                Dim bitDoBW As Boolean = chkBW.Checked
+                Dim bitDoAlpha As Boolean = chkAlpha.Checked
+                Dim bitInvert As Boolean = chkInvert.Checked
 
-            Dim objBaseColor As System.Drawing.Color
-            If Val(txtBase.Text) > 0 Then
+                'Dim objPic As System.Drawing.Image
+                Dim objSource As New System.Drawing.Bitmap(intImageWidth, intImageHeight)
+                Dim objTarget As New System.Drawing.Bitmap(picSource.Image.Size.Width, picSource.Image.Size.Height)
+                Dim objColor As System.Drawing.Color
+                Dim intNewGray As UInt16
+                Dim intThresh As Integer = tbBWTH.Value
+
+                Dim objBaseColor As System.Drawing.Color
+                Dim objTopColor As System.Drawing.Color
+
+                If bitInvert Then
+                    objBaseColor = Color.White
+                    objTopColor = Color.Black
+                Else
+                    objBaseColor = Color.Black
+                    objTopColor = Color.White
+                End If
+
+                'If Val(txtBase.Text) > 0 Then
                 'Dim intGray As Integer = 255 - (Val(txtBase.Text) / (Val(txtZ.Text) + Val(txtBase.Text)) * 255)
-                objBaseColor = System.Drawing.Color.FromArgb(intBaseZC, intBaseZC, intBaseZC)
-            Else
-                objBaseColor = Color.White
-            End If
+                'objBaseColor = System.Drawing.Color.FromArgb(intBaseZC, intBaseZC, intBaseZC)
+                'Else
+                'objBaseColor = Color.White
+                'End If
 
 
-            objSource = picSource.Image
+                objSource = picSource.Image
 
-            For X = 1 To picSource.Image.Size.Width
-                For Y = 1 To picSource.Image.Size.Height
-                    objColor = objSource.GetPixel(X - 1, Y - 1)
-                    If bitDoBW Then
-                        If (Int(objColor.R) + Int(objColor.B) + Int(objColor.G)) / 3 >= intThresh Then
-                            'objTarget.SetPixel(X - 1, Y - 1, Color.White)
-                            objTarget.SetPixel(X - 1, Y - 1, objBaseColor)
-                        Else
-                            objTarget.SetPixel(X - 1, Y - 1, Color.Black)
+                For X = 1 To picSource.Image.Size.Width
+                    For Y = 1 To picSource.Image.Size.Height
+                        objColor = objSource.GetPixel(X - 1, Y - 1)
+
+                        'Compute gray
+                        intNewGray = (Int(objColor.R) + Int(objColor.B) + Int(objColor.G)) / 3
+
+                        'Compute Alpha
+                        If bitDoAlpha Then
+                            intNewGray = 255 - ((255 - intNewGray) * objColor.A / 255)
                         End If
-                    Else
-                        intNewGray = ((Int(objColor.R) + Int(objColor.B) + Int(objColor.G)) / 3 * dblImageZRatio)
 
-                        objTarget.SetPixel(X - 1, Y - 1, Color.FromArgb(intNewGray, intNewGray, intNewGray))
+                        If bitDoBW Then
+                            If intNewGray >= intThresh Then
+                                objTarget.SetPixel(X - 1, Y - 1, objTopColor)
+                            Else
+                                objTarget.SetPixel(X - 1, Y - 1, objBaseColor)
+                            End If
+                        Else
+                            If bitInvert Then
+                                objTarget.SetPixel(X - 1, Y - 1, Color.FromArgb(255 - intNewGray, 255 - intNewGray, 255 - intNewGray))
+                            Else
+                                objTarget.SetPixel(X - 1, Y - 1, Color.FromArgb(intNewGray, intNewGray, intNewGray))
+                            End If
+                        End If
+                    Next
+                    Application.DoEvents()
+                    If bitUpdateNeeded Then
+                        bitWorking = False
+                        Exit Sub
                     End If
                 Next
-                Application.DoEvents()
-                If bitUpdateNeeded Then
-                    bitWorking = False
-                    Exit Sub
-                End If
-            Next
 
-            If chkSpike.Checked Then
-                Dim bitSpikeFound As Boolean
-                Dim intSpikeFound As UInt32 = 0
-                Dim bitFriendFound As Boolean
-                Dim bitHasFriends As Boolean
-                Dim objFirstAltLayer As Color
+                If chkSpike.Checked Then
+                    Dim bitSpikeFound As Boolean
+                    Dim intSpikeFound As UInt32 = 0
+                    Dim bitFriendFound As Boolean
+                    Dim bitHasFriends As Boolean
+                    Dim objFirstAltLayer As Color
 
-                Do
-                    bitSpikeFound = False
+                    Do
+                        bitSpikeFound = False
 
-                    For X = 1 To picSource.Image.Size.Width - 2
-                        For Y = 1 To picSource.Image.Size.Height - 2
-                            bitFriendFound = False
-                            bitHasFriends = False
-                            objColor = objTarget.GetPixel(X, Y)
+                        For X = 1 To picSource.Image.Size.Width - 2
+                            For Y = 1 To picSource.Image.Size.Height - 2
+                                bitFriendFound = False
+                                bitHasFriends = False
+                                objColor = objTarget.GetPixel(X, Y)
 
-                            If objColor = objTarget.GetPixel(X - 1, Y - 1) Then
-                                bitFriendFound = True
-                            Else
-                                objFirstAltLayer = objTarget.GetPixel(X - 1, Y - 1)
-                            End If
-
-                            If objColor = objTarget.GetPixel(X, Y - 1) Then
-                                bitHasFriends = True
-                            Else
-                                If objFirstAltLayer = objTarget.GetPixel(X, Y - 1) Then
-                                    bitFriendFound = False
+                                If objColor = objTarget.GetPixel(X - 1, Y - 1) Then
+                                    bitFriendFound = True
                                 Else
-                                    bitHasFriends = True
+                                    objFirstAltLayer = objTarget.GetPixel(X - 1, Y - 1)
                                 End If
-                            End If
 
-                            FriendLogic(objColor, objTarget.GetPixel(X + 1, Y - 1), bitHasFriends, bitFriendFound, objFirstAltLayer)
-                            FriendLogic(objColor, objTarget.GetPixel(X + 1, Y), bitHasFriends, bitFriendFound, objFirstAltLayer)
-                            FriendLogic(objColor, objTarget.GetPixel(X + 1, Y + 1), bitHasFriends, bitFriendFound, objFirstAltLayer)
-                            FriendLogic(objColor, objTarget.GetPixel(X, Y + 1), bitHasFriends, bitFriendFound, objFirstAltLayer)
-                            FriendLogic(objColor, objTarget.GetPixel(X - 1, Y + 1), bitHasFriends, bitFriendFound, objFirstAltLayer)
-                            FriendLogic(objColor, objTarget.GetPixel(X - 1, Y), bitHasFriends, bitFriendFound, objFirstAltLayer)
-
-                            'Need to do one extra check back to the first.
-                            If Not bitHasFriends Then
-                                If bitFriendFound Then
-                                    If objColor = objTarget.GetPixel(X - 1, Y - 1) Then
+                                If objColor = objTarget.GetPixel(X, Y - 1) Then
+                                    bitHasFriends = True
+                                Else
+                                    If objFirstAltLayer = objTarget.GetPixel(X, Y - 1) Then
+                                        bitFriendFound = False
+                                    Else
                                         bitHasFriends = True
                                     End If
                                 End If
+
+                                FriendLogic(objColor, objTarget.GetPixel(X + 1, Y - 1), bitHasFriends, bitFriendFound, objFirstAltLayer)
+                                FriendLogic(objColor, objTarget.GetPixel(X + 1, Y), bitHasFriends, bitFriendFound, objFirstAltLayer)
+                                FriendLogic(objColor, objTarget.GetPixel(X + 1, Y + 1), bitHasFriends, bitFriendFound, objFirstAltLayer)
+                                FriendLogic(objColor, objTarget.GetPixel(X, Y + 1), bitHasFriends, bitFriendFound, objFirstAltLayer)
+                                FriendLogic(objColor, objTarget.GetPixel(X - 1, Y + 1), bitHasFriends, bitFriendFound, objFirstAltLayer)
+                                FriendLogic(objColor, objTarget.GetPixel(X - 1, Y), bitHasFriends, bitFriendFound, objFirstAltLayer)
+
+                                'Need to do one extra check back to the first.
+                                If Not bitHasFriends Then
+                                    If bitFriendFound Then
+                                        If objColor = objTarget.GetPixel(X - 1, Y - 1) Then
+                                            bitHasFriends = True
+                                        End If
+                                    End If
+                                End If
+
+                                If Not bitHasFriends Then
+                                    bitSpikeFound = True
+                                    intSpikeFound += 1
+                                    objTarget.SetPixel(X, Y, objFirstAltLayer)
+                                End If
+                            Next
+
+                            If bitUpdateNeeded Then
+                                bitWorking = False
+                                Exit Sub
                             End If
 
-                            If Not bitHasFriends Then
-                                bitSpikeFound = True
-                                intSpikeFound += 1
-                                objTarget.SetPixel(X, Y, objFirstAltLayer)
-                            End If
+                            Me.Text = "Image To STL Converter - Found " & intSpikeFound & " spikes..."
+                            Application.DoEvents()
                         Next
+                    Loop While bitSpikeFound
+                End If
 
-                        If bitUpdateNeeded Then
-                            bitWorking = False
-                            Exit Sub
-                        End If
+                picDest.Image = objTarget
+            Catch ex As Exception
+                intErrorCount += 1
+                If intErrorCount > 3 Then
+                    MessageBox.Show("Ok, I'm broken bad!  We have a bug!" & vbNewLine & vbNewLine & _
+                                    "Sorry, but I'm shutting down...", "You're doomed!", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    End
+                ElseIf intErrorCount > 1 Then
+                    MessageBox.Show("EGAD!  We had an error!" & vbNewLine & vbNewLine & _
+                                    "This can happen if you load an image while processing is still running (multiple times)." & vbNewLine & vbNewLine & _
+                                    "If the image was NOT still processing and you received this alert, please report it with the following error:" & vbNewLine & vbNewLine & _
+                                    ex.Message, "Compute Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    MessageBox.Show("I will try to continue processing your image.  If you get the same alert again, well, you’re doomed!", "It's all good!", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                End If
+            End Try
 
-                        Me.Text = "Image To STL Converter - Found " & intSpikeFound & " spikes..."
-                        Application.DoEvents()
-                    Next
-                Loop While bitSpikeFound
-            End If
-
-            picDest.Image = objTarget
+            intErrorCount = 0
 
             bitWorking = False
             cmdCreate.Enabled = True
             picDest.BorderStyle = BorderStyle.FixedSingle
+            lblSpike.Visible = True
         End If
     End Sub
 
@@ -247,8 +325,13 @@
             Else
                 txtBaseBoarder.Enabled = False
             End If
+
+            If Val(.Text) + Val(txtZ.Text) > 255 Then
+                MessageBox.Show("(Base Height + Image Height) Cannot exceed 255.  Correcting value!", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                .Text = 255 - Val(txtZ.Text)
+                .SelectionStart = .Text.Length
+            End If
         End With
-        bitUpdateNeeded = True
     End Sub
 
     Function SafeNumber(ByRef strInput As String) As Boolean
@@ -276,7 +359,6 @@
                 .SelectionStart = .Text.Length
             End If
         End With
-        bitUpdateNeeded = True
     End Sub
 
     Private Sub txtX_TextChanged(sender As Object, e As EventArgs) Handles txtX.TextChanged
@@ -292,7 +374,6 @@
                     bitUpdateingSize = False
                 End If
             End With
-            bitUpdateNeeded = True
         End If
     End Sub
 
@@ -309,7 +390,6 @@
                     bitUpdateingSize = False
                 End If
             End With
-            bitUpdateNeeded = True
         End If
     End Sub
 
@@ -318,11 +398,15 @@
             If SafeNumber(.Text) Then
                 .SelectionStart = .Text.Length
             End If
+            If Val(.Text) + Val(txtBase.Text) > 255 Then
+                MessageBox.Show("(Base Height + Image Height) Cannot exceed 255.  Correcting value!", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                .Text = 255 - Val(txtBase.Text)
+                .SelectionStart = .Text.Length
+            End If
         End With
-        bitUpdateNeeded = True
     End Sub
 
-    Sub CreateSTLFile()
+    Sub CreateSTLFile(ByRef strFile As String)
         'Binary STL File format:
         '***************************************
         'UINT8[80] – Header
@@ -336,203 +420,17 @@
         'UINT16 – Attribute byte count
         'End
         '***************************************
+        Dim bitInverted As Boolean = False
 
-        Dim strFile As String = "F:\Temp\Test.stl"
         Dim strHeader As String
-        
+
         Dim X As UInt32
         Dim Y As UInt32
 
-        'We can fix it!
 
-        Dim objImage As System.Drawing.Bitmap = picDest.Image
-        Dim intImageWidth As Integer = objImage.Size.Width
-        Dim intImageHeight As Integer = objImage.Size.Height
-
-        Dim dblScaleX As Double = CDbl(txtX.Text) / CDbl(intImageWidth)
-        Dim dblScaleY As Double = CDbl(txtY.Text) / CDbl(intImageHeight)
-
-        Dim objTriangles(intImageWidth * intImageHeight * 12) As Triangle
+        'Dim objTriangles(intImageWidth * intImageHeight * 12) As Triangle
+        Dim objTriangle As Triangle
         Dim objTriangleC As UInt32 = 0
-
-        Dim intHeights(objImage.Size.Width + 2, objImage.Size.Height + 2) As Single
-        Dim intTotalHeight As UInt16 = Val(txtZ.Text) + Val(txtBase.Text)
-
-        Dim intMinDepth As UInt32 = 255
-        Dim bitDoBase As Boolean = True
-
-        For X = 0 To intImageWidth - 1
-            For Y = 0 To intImageHeight - 1
-                intHeights((intImageWidth) - X, (intImageHeight) - Y) = (255 - CDbl(objImage.GetPixel(X, Y).R)) / 255 * intTotalHeight
-                If intHeights((intImageWidth) - X, (intImageHeight) - Y) < intMinDepth Then
-                    intMinDepth = intHeights((intImageWidth) - X, (intImageHeight) - Y)
-                End If
-            Next
-        Next
-
-        'Point order is important to calculate an "outside surface"!
-
-        If intMinDepth > 0 Then
-            bitDoBase = False
-
-            'Lets do a simple base...
-            objTriangleC += 1
-            With objTriangles(objTriangleC)
-                .intX1 = (intImageWidth + 1) * dblScaleX
-                .intY1 = 0
-                .intZ1 = 0
-
-                .intX2 = 0
-                .intY2 = 0
-                .intZ2 = 0
-
-                .intX3 = 0
-                .intY3 = (intImageHeight + 1) * dblScaleY
-                .intZ3 = 0
-            End With
-
-            objTriangleC += 1
-            With objTriangles(objTriangleC)
-                .intX1 = (intImageWidth + 1) * dblScaleX
-                .intY1 = 0
-                .intZ1 = 0
-
-                .intX2 = 0
-                .intY2 = (intImageHeight + 1) * dblScaleY
-                .intZ2 = 0
-
-                .intX3 = (intImageWidth + 1) * dblScaleX
-                .intY3 = (intImageHeight + 1) * dblScaleY
-                .intZ3 = 0
-            End With
-
-            For X = 0 To intImageWidth - 1
-                ''TopMost #1
-                'objTriangleC += 1
-                'With objTriangles(objTriangleC)
-                '    .intX1 = X * dblScaleX
-                '    .intY1 = 0
-                '    .intZ1 = 0
-
-                '    .intX2 = (X + 1) * dblScaleX
-                '    .intY2 = 0
-                '    .intZ2 = 0
-
-                '    .intX3 = X * dblScaleX
-                '    .intY3 = 0
-                '    .intZ3 = intHeights(X + 1, 1)
-                'End With
-
-                ''TopMost #2
-                'objTriangleC += 1
-                'With objTriangles(objTriangleC)
-                '    .intX1 = (X + 1) * dblScaleX
-                '    .intY1 = 0
-                '    .intZ1 = 0
-
-                '    .intX2 = (X + 1) * dblScaleX
-                '    .intY2 = 0
-                '    .intZ2 = intHeights(X + 1, 1)
-
-                '    .intX3 = X * dblScaleX
-                '    .intY3 = 0
-                '    .intZ3 = intHeights(X + 1, 1)
-                'End With
-
-                ''BottomMost #1
-                'objTriangleC += 1
-                'With objTriangles(objTriangleC)
-                '    .intX1 = X * dblScaleX
-                '    .intY1 = intImageHeight * dblScaleY
-                '    .intZ1 = 0
-
-                '    .intX2 = X * dblScaleX
-                '    .intY2 = intImageHeight * dblScaleY
-                '    .intZ2 = intHeights(X + 1, intImageHeight - 1)
-
-                '    .intX3 = (X + 1) * dblScaleX
-                '    .intY3 = intImageHeight * dblScaleY
-                '    .intZ3 = 0
-                'End With
-
-                ''BottomMost #2
-                'objTriangleC += 1
-                'With objTriangles(objTriangleC)
-                '    .intX1 = (X + 1) * dblScaleX
-                '    .intY1 = intImageHeight * dblScaleY
-                '    .intZ1 = 0
-
-                '    .intX2 = X * dblScaleX
-                '    .intY2 = intImageHeight * dblScaleY
-                '    .intZ2 = intHeights(X + 1, intImageHeight - 1)
-
-                '    .intX3 = (X + 1) * dblScaleX
-                '    .intY3 = intImageHeight * dblScaleY
-                '    .intZ3 = intHeights(X + 1, intImageHeight - 1)
-                'End With
-            Next
-
-
-            For Y = 0 To intImageHeight - 2
-            Next
-        End If
-
-
-        For X = 1 To objImage.Size.Width + 1
-            For Y = 1 To objImage.Size.Height + 1
-                'If not bitDoBase, we know we have to map everything, skip the check.
-                If (Not bitDoBase) OrElse _
-                    intHeights(X, Y) > 0 OrElse _
-                    intHeights(X - 1, Y) > 0 OrElse _
-                    intHeights(X, Y - 1) > 0 OrElse _
-                    intHeights(X - 1, Y - 1) > 0 Then
-
-                    If X = objImage.Size.Width And Y = 10 Then
-                        Application.DoEvents()
-                    End If
-
-                    'Above
-                    objTriangleC += 1
-                    With objTriangles(objTriangleC)
-                        .intX1 = X * dblScaleX
-                        .intY1 = Y * dblScaleY
-                        .intZ1 = intHeights(X, Y)
-
-                        .intX2 = (X - 1) * dblScaleX
-                        .intY2 = (Y - 1) * dblScaleY
-                        .intZ2 = intHeights(X - 1, Y - 1)
-
-                        .intX3 = X * dblScaleX
-                        .intY3 = (Y - 1) * dblScaleY
-                        .intZ3 = intHeights(X, Y - 1)
-                    End With
-
-                    'Left
-                    objTriangleC += 1
-                    With objTriangles(objTriangleC)
-                        .intX1 = X * dblScaleX
-                        .intY1 = Y * dblScaleY
-                        .intZ1 = intHeights(X, Y)
-
-                        .intX2 = (X - 1) * dblScaleX
-                        .intY2 = Y * dblScaleY
-                        .intZ2 = intHeights(X - 1, Y)
-
-                        .intX3 = (X - 1) * dblScaleX
-                        .intY3 = (Y - 1) * dblScaleY
-                        .intZ3 = intHeights(X - 1, Y - 1)
-                    End With
-                End If
-
-
-                If bitDoBase Then
-
-                End If
-            Next
-        Next
-
-
-        'objTriangleC += 1
 
 
         Dim objFile As IO.FileStream
@@ -558,16 +456,147 @@
         End If
 
 
-        'Lets get to it!
-        For X = 1 To objTriangleC
-            WriteTriangle(objTriangles(X), objFile)
+
+        Dim objImage As System.Drawing.Bitmap = picDest.Image
+        Dim intImageWidth As Integer = objImage.Size.Width
+        Dim intImageHeight As Integer = objImage.Size.Height
+        Dim dblImageBase As Double = Val(txtBase.Text)
+
+        Dim dblScaleX As Double = CDbl(txtX.Text) / CDbl(intImageWidth)
+        Dim dblScaleY As Double = CDbl(txtY.Text) / CDbl(intImageHeight)
+        Dim dblScaleZ As Double = CDbl(txtZ.Text) / 255
+
+
+        Dim intHeights(objImage.Size.Width + 2, objImage.Size.Height + 2) As Single
+        Dim intTotalHeight As UInt16 = Val(txtZ.Text) + Val(txtBase.Text)
+
+        Dim intMinDepth As UInt32 = 255
+        Dim bitDoBase As Boolean = True
+
+        For X = 0 To intImageWidth - 1
+            For Y = 0 To intImageHeight - 1
+                If bitInverted Then
+                    intHeights(X + 1, (intImageHeight) - Y) = dblImageBase + CDbl(objImage.GetPixel(X, Y).R) * dblScaleZ
+                Else
+                    intHeights(X + 1, (intImageHeight) - Y) = dblImageBase + (255 - CDbl(objImage.GetPixel(X, Y).R)) * dblScaleZ
+                End If
+                If intHeights(X + 1, (intImageHeight) - Y) < intMinDepth Then
+                    intMinDepth = intHeights(X + 1, (intImageHeight) - Y)
+                End If
+            Next
         Next
+
+        'Point order is important to calculate an "outside surface"!
+
+        If intMinDepth > 0 Then
+            bitDoBase = False
+
+            'Lets do a simple base...
+            objTriangleC += 1
+            With objTriangle
+                .intX1 = (intImageWidth + 1) * dblScaleX
+                .intY1 = 0
+                .intZ1 = 0
+
+                .intX2 = 0
+                .intY2 = 0
+                .intZ2 = 0
+
+                .intX3 = 0
+                .intY3 = (intImageHeight + 1) * dblScaleY
+                .intZ3 = 0
+            End With
+            WriteTriangle(objTriangle, objFile)
+
+            objTriangleC += 1
+            With objTriangle
+                .intX1 = (intImageWidth + 1) * dblScaleX
+                .intY1 = 0
+                .intZ1 = 0
+
+                .intX2 = 0
+                .intY2 = (intImageHeight + 1) * dblScaleY
+                .intZ2 = 0
+
+                .intX3 = (intImageWidth + 1) * dblScaleX
+                .intY3 = (intImageHeight + 1) * dblScaleY
+                .intZ3 = 0
+            End With
+            WriteTriangle(objTriangle, objFile)
+        End If
+
+
+        For X = 1 To objImage.Size.Width + 1
+            For Y = 1 To objImage.Size.Height + 1
+                'If not bitDoBase, we know we have to map everything, skip the check.
+                If (Not bitDoBase) OrElse _
+                    intHeights(X, Y) > 0 OrElse _
+                    intHeights(X - 1, Y) > 0 OrElse _
+                    intHeights(X, Y - 1) > 0 OrElse _
+                    intHeights(X - 1, Y - 1) > 0 Then
+
+                    If X = objImage.Size.Width And Y = 10 Then
+                        Application.DoEvents()
+                    End If
+
+                    'Above
+                    objTriangleC += 1
+                    With objTriangle
+                        .intX1 = X * dblScaleX
+                        .intY1 = Y * dblScaleY
+                        .intZ1 = intHeights(X, Y)
+
+                        .intX2 = (X - 1) * dblScaleX
+                        .intY2 = (Y - 1) * dblScaleY
+                        .intZ2 = intHeights(X - 1, Y - 1)
+
+                        .intX3 = X * dblScaleX
+                        .intY3 = (Y - 1) * dblScaleY
+                        .intZ3 = intHeights(X, Y - 1)
+                    End With
+                    WriteTriangle(objTriangle, objFile)
+
+                    'Left
+                    objTriangleC += 1
+                    With objTriangle
+                        .intX1 = X * dblScaleX
+                        .intY1 = Y * dblScaleY
+                        .intZ1 = intHeights(X, Y)
+
+                        .intX2 = (X - 1) * dblScaleX
+                        .intY2 = Y * dblScaleY
+                        .intZ2 = intHeights(X - 1, Y)
+
+                        .intX3 = (X - 1) * dblScaleX
+                        .intY3 = (Y - 1) * dblScaleY
+                        .intZ3 = intHeights(X - 1, Y - 1)
+                    End With
+                    WriteTriangle(objTriangle, objFile)
+                End If
+
+
+                If bitDoBase Then
+
+                End If
+            Next
+        Next
+
+
+
+
+
+        'Lets get to it!
+        'For X = 1 To objTriangleC
+        'WriteTriangle(objTriangles(X), objFile)
+        'Next
 
         'Catch ex As Exception
         'MessageBox.Show("Error: " & ex.Message, "Program Error")
         'End Try
 
-        If Not bitBinMode Then
+        If bitBinMode Then
+            WriteTriangleCount(objTriangleC, objFile)
+        Else
             WriteByteArray("endsolid" & vbNewLine, objFile)
         End If
 
@@ -576,122 +605,6 @@
         Catch ex As Exception
 
         End Try
-
-        End
-    End Sub
-
-    Sub DebugTriangle(ByRef objFile As IO.FileStream)
-        Dim objTriangle As Triangle
-        Dim intTriangles As UInt32 = 6
-        objFile.WriteByte(intTriangles)
-        With objTriangle
-            '#1
-            .intX1 = 0
-            .intY1 = 0
-            .intZ1 = 0
-
-            .intX2 = 20
-            .intY2 = 0
-            .intZ2 = 0
-
-            .intX3 = 10
-            .intY3 = 10
-            .intZ3 = 20
-
-            .intABC = 0
-        End With
-        WriteTriangle(objTriangle, objFile)
-
-        With objTriangle
-            '#2
-            .intX1 = 0
-            .intY1 = 0
-            .intZ1 = 0
-
-            .intX2 = 0
-            .intY2 = 20
-            .intZ2 = 0
-
-            .intX3 = 10
-            .intY3 = 10
-            .intZ3 = 20
-
-            .intABC = 0
-        End With
-        WriteTriangle(objTriangle, objFile)
-
-        With objTriangle
-            '#3
-            .intX1 = 20
-            .intY1 = 0
-            .intZ1 = 0
-
-            .intX2 = 20
-            .intY2 = 20
-            .intZ2 = 0
-
-            .intX3 = 10
-            .intY3 = 10
-            .intZ3 = 20
-
-            .intABC = 0
-        End With
-        WriteTriangle(objTriangle, objFile)
-
-        With objTriangle
-            '#4
-            .intX1 = 0
-            .intY1 = 20
-            .intZ1 = 0
-
-            .intX2 = 20
-            .intY2 = 20
-            .intZ2 = 0
-
-            .intX3 = 10
-            .intY3 = 10
-            .intZ3 = 20
-
-            .intABC = 50
-        End With
-        WriteTriangle(objTriangle, objFile)
-
-        With objTriangle
-            '#5
-            .intX1 = 0
-            .intY1 = 0
-            .intZ1 = 0
-
-            .intX2 = 0
-            .intY2 = 20
-            .intZ2 = 0
-
-            .intX3 = 20
-            .intY3 = 0
-            .intZ3 = 0
-
-            .intABC = 50
-        End With
-        WriteTriangle(objTriangle, objFile)
-
-        With objTriangle
-            '#6
-            .intX1 = 20
-            .intY1 = 20
-            .intZ1 = 0
-
-            .intX2 = 0
-            .intY2 = 20
-            .intZ2 = 0
-
-            .intX3 = 20
-            .intY3 = 0
-            .intZ3 = 0
-
-            .intABC = 50
-        End With
-        WriteTriangle(objTriangle, objFile)
-
     End Sub
 
     Sub WriteTriangle(ByRef objTriangle As Triangle, ByRef objFile As IO.FileStream)
@@ -715,9 +628,13 @@
             '.intZN = (.intX2 - .intX1) * (.intY3 - .intY1) - (.intX2 - .intX1) * (.intX3 - .intX1)
 
             If bitBinMode Then
-                WriteByteArray(.intXN, objFile)
-                WriteByteArray(.intYN, objFile)
-                WriteByteArray(.intZN, objFile)
+                'WriteByteArray(.intXN, objFile)
+                'WriteByteArray(.intYN, objFile)
+                'WriteByteArray(.intZN, objFile)
+                WriteByteArray(conEmptySingle, objFile)
+                WriteByteArray(conEmptySingle, objFile)
+                WriteByteArray(conEmptySingle, objFile)
+
 
                 WriteByteArray(.intX1, objFile)
                 WriteByteArray(.intY1, objFile)
@@ -731,7 +648,8 @@
                 WriteByteArray(.intY3, objFile)
                 WriteByteArray(.intZ3, objFile)
 
-                WriteByteArray(.intABC, objFile)
+                'WriteByteArray(.intABC, objFile)
+                WriteByteArray(conEmptyUInt16, objFile)
 
             Else
                 WriteByteArray("outer loop" & vbNewLine, objFile)
@@ -742,6 +660,15 @@
                 WriteByteArray("endfacet" & vbNewLine, objFile)
             End If
         End With
+    End Sub
+
+
+    Sub WriteTriangleCount(ByRef intTriangleC As UInt32, ByRef objFile As IO.FileStream)
+        Dim bytBytes As Byte() = BitConverter.GetBytes(intTriangleC)
+        objFile.Seek(80, IO.SeekOrigin.Begin)
+        For Each bytByte In bytBytes
+            objFile.WriteByte(bytByte)
+        Next
     End Sub
 
     Sub WriteByteArray(ByRef objVar As Single, ByRef objFile As IO.FileStream)
@@ -800,11 +727,63 @@
 
     Private Sub chkSpike_CheckedChanged(sender As Object, e As EventArgs) Handles chkSpike.CheckedChanged
         bitUpdateNeeded = True
+        If chkSpike.Checked = False Then
+            Me.Text = "Image To STL Converter"
+            lblSpike.Visible = True
+        End If
     End Sub
 
     Private Sub chkBW_CheckedChanged(sender As Object, e As EventArgs) Handles chkBW.CheckedChanged
         bitUpdateNeeded = True
         tbBWTH.Enabled = chkBW.Checked
     End Sub
+
+    Private Sub cmdOpen_Click(sender As Object, e As EventArgs) Handles cmdOpen.Click
+        SetFormMode(False)
+        Application.DoEvents()
+        Dim strFile As String = ""
+        Dim objOF As New Windows.Forms.OpenFileDialog
+        objOF.Filter = "Images Files|*.png; *.jpg; *.gif; *.bmp; *.tif; *.tiff"
+        Dim objResult As DialogResult = objOF.ShowDialog()
+        If objResult = Windows.Forms.DialogResult.OK Then
+            Try
+                strFile = objOF.FileNames(0)
+                LoadImage(strFile)
+            Catch ex As Exception
+                MessageBox.Show("Sorry, I was unable to load that file." & vbNewLine _
+                                & "Error: " & ex.Message, "Error Loading File", _
+                                MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End If
+        SetFormMode(True)
+    End Sub
+
+
+    Sub SetFormMode(ByRef bitMode As Boolean)
+        txtBase.Enabled = bitMode
+        txtRez.Enabled = bitMode
+        txtBaseBoarder.Enabled = bitMode
+        txtX.Enabled = bitMode
+        txtY.Enabled = bitMode
+        txtZ.Enabled = bitMode
+        chkBW.Enabled = bitMode
+        chkSpike.Enabled = bitMode
+        chkLocked.Enabled = bitMode
+        chkAlpha.Enabled = bitMode
+        chkInvert.Enabled = bitMode
+        tbBWTH.Enabled = bitMode
+        cmdCreate.Enabled = bitMode
+        cmdOpen.Enabled = bitMode
+    End Sub
+
+    Private Sub chkAlpha_CheckedChanged(sender As Object, e As EventArgs) Handles chkAlpha.CheckedChanged
+        bitUpdateNeeded = True
+    End Sub
+
+    Private Sub chkInvert_CheckedChanged(sender As Object, e As EventArgs) Handles chkInvert.CheckedChanged
+        bitUpdateNeeded = True
+    End Sub
 End Class
+
+
 

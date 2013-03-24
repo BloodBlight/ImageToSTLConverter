@@ -44,6 +44,10 @@ Partial Class frmMain
         Me.chkLocked = New System.Windows.Forms.CheckBox()
         Me.chkSpike = New System.Windows.Forms.CheckBox()
         Me.chkBW = New System.Windows.Forms.CheckBox()
+        Me.cmdOpen = New System.Windows.Forms.Button()
+        Me.lblSpike = New System.Windows.Forms.Label()
+        Me.chkAlpha = New System.Windows.Forms.CheckBox()
+        Me.chkInvert = New System.Windows.Forms.CheckBox()
         CType(Me.picSource, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.picDest, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbBWTH, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -78,16 +82,16 @@ Partial Class frmMain
         '
         'cmdCreate
         '
-        Me.cmdCreate.Location = New System.Drawing.Point(1006, 549)
+        Me.cmdCreate.Location = New System.Drawing.Point(996, 549)
         Me.cmdCreate.Name = "cmdCreate"
-        Me.cmdCreate.Size = New System.Drawing.Size(75, 23)
+        Me.cmdCreate.Size = New System.Drawing.Size(158, 23)
         Me.cmdCreate.TabIndex = 3
         Me.cmdCreate.Text = "Create STL"
         Me.cmdCreate.UseVisualStyleBackColor = True
         '
         'tbBWTH
         '
-        Me.tbBWTH.Location = New System.Drawing.Point(1000, 431)
+        Me.tbBWTH.Location = New System.Drawing.Point(1003, 498)
         Me.tbBWTH.Maximum = 254
         Me.tbBWTH.Name = "tbBWTH"
         Me.tbBWTH.Size = New System.Drawing.Size(155, 45)
@@ -100,7 +104,7 @@ Partial Class frmMain
         '
         'txtX
         '
-        Me.txtX.Location = New System.Drawing.Point(996, 28)
+        Me.txtX.Location = New System.Drawing.Point(999, 75)
         Me.txtX.Name = "txtX"
         Me.txtX.Size = New System.Drawing.Size(76, 20)
         Me.txtX.TabIndex = 6
@@ -108,7 +112,7 @@ Partial Class frmMain
         '
         'txtY
         '
-        Me.txtY.Location = New System.Drawing.Point(1075, 28)
+        Me.txtY.Location = New System.Drawing.Point(1078, 75)
         Me.txtY.Name = "txtY"
         Me.txtY.Size = New System.Drawing.Size(76, 20)
         Me.txtY.TabIndex = 7
@@ -117,7 +121,7 @@ Partial Class frmMain
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(993, 12)
+        Me.Label1.Location = New System.Drawing.Point(996, 59)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(130, 13)
         Me.Label1.TabIndex = 9
@@ -126,7 +130,7 @@ Partial Class frmMain
         'Label2
         '
         Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(997, 129)
+        Me.Label2.Location = New System.Drawing.Point(1000, 176)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(83, 13)
         Me.Label2.TabIndex = 10
@@ -135,7 +139,7 @@ Partial Class frmMain
         'Label3
         '
         Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(997, 180)
+        Me.Label3.Location = New System.Drawing.Point(1000, 227)
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(123, 13)
         Me.Label3.TabIndex = 12
@@ -143,7 +147,7 @@ Partial Class frmMain
         '
         'txtBase
         '
-        Me.txtBase.Location = New System.Drawing.Point(1000, 145)
+        Me.txtBase.Location = New System.Drawing.Point(1003, 192)
         Me.txtBase.Name = "txtBase"
         Me.txtBase.Size = New System.Drawing.Size(76, 20)
         Me.txtBase.TabIndex = 13
@@ -152,7 +156,7 @@ Partial Class frmMain
         '
         'txtBaseBoarder
         '
-        Me.txtBaseBoarder.Location = New System.Drawing.Point(1000, 196)
+        Me.txtBaseBoarder.Location = New System.Drawing.Point(1003, 243)
         Me.txtBaseBoarder.Name = "txtBaseBoarder"
         Me.txtBaseBoarder.Size = New System.Drawing.Size(76, 20)
         Me.txtBaseBoarder.TabIndex = 14
@@ -161,7 +165,7 @@ Partial Class frmMain
         '
         'txtZ
         '
-        Me.txtZ.Location = New System.Drawing.Point(1000, 96)
+        Me.txtZ.Location = New System.Drawing.Point(1003, 143)
         Me.txtZ.Name = "txtZ"
         Me.txtZ.Size = New System.Drawing.Size(76, 20)
         Me.txtZ.TabIndex = 16
@@ -171,7 +175,7 @@ Partial Class frmMain
         'Label4
         '
         Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(997, 80)
+        Me.Label4.Location = New System.Drawing.Point(1000, 127)
         Me.Label4.Name = "Label4"
         Me.Label4.Size = New System.Drawing.Size(102, 13)
         Me.Label4.TabIndex = 15
@@ -179,7 +183,8 @@ Partial Class frmMain
         '
         'txtRez
         '
-        Me.txtRez.Location = New System.Drawing.Point(1000, 259)
+        Me.txtRez.Enabled = False
+        Me.txtRez.Location = New System.Drawing.Point(1003, 306)
         Me.txtRez.Name = "txtRez"
         Me.txtRez.Size = New System.Drawing.Size(76, 20)
         Me.txtRez.TabIndex = 18
@@ -189,7 +194,7 @@ Partial Class frmMain
         'Label5
         '
         Me.Label5.AutoSize = True
-        Me.Label5.Location = New System.Drawing.Point(997, 243)
+        Me.Label5.Location = New System.Drawing.Point(1000, 290)
         Me.Label5.Name = "Label5"
         Me.Label5.Size = New System.Drawing.Size(110, 13)
         Me.Label5.TabIndex = 17
@@ -200,7 +205,7 @@ Partial Class frmMain
         Me.chkLocked.AutoSize = True
         Me.chkLocked.Checked = True
         Me.chkLocked.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkLocked.Location = New System.Drawing.Point(996, 54)
+        Me.chkLocked.Location = New System.Drawing.Point(999, 101)
         Me.chkLocked.Name = "chkLocked"
         Me.chkLocked.Size = New System.Drawing.Size(90, 17)
         Me.chkLocked.TabIndex = 19
@@ -210,7 +215,7 @@ Partial Class frmMain
         'chkSpike
         '
         Me.chkSpike.AutoSize = True
-        Me.chkSpike.Location = New System.Drawing.Point(996, 295)
+        Me.chkSpike.Location = New System.Drawing.Point(999, 356)
         Me.chkSpike.Name = "chkSpike"
         Me.chkSpike.Size = New System.Drawing.Size(78, 17)
         Me.chkSpike.TabIndex = 20
@@ -220,19 +225,63 @@ Partial Class frmMain
         'chkBW
         '
         Me.chkBW.AutoSize = True
-        Me.chkBW.Location = New System.Drawing.Point(996, 408)
+        Me.chkBW.Location = New System.Drawing.Point(999, 475)
         Me.chkBW.Name = "chkBW"
         Me.chkBW.Size = New System.Drawing.Size(138, 17)
         Me.chkBW.TabIndex = 21
         Me.chkBW.Text = "Enable B/W Threshold:"
         Me.chkBW.UseVisualStyleBackColor = True
         '
+        'cmdOpen
+        '
+        Me.cmdOpen.Location = New System.Drawing.Point(996, 12)
+        Me.cmdOpen.Name = "cmdOpen"
+        Me.cmdOpen.Size = New System.Drawing.Size(158, 23)
+        Me.cmdOpen.TabIndex = 22
+        Me.cmdOpen.Text = "Open Image"
+        Me.cmdOpen.UseVisualStyleBackColor = True
+        '
+        'lblSpike
+        '
+        Me.lblSpike.AutoSize = True
+        Me.lblSpike.Location = New System.Drawing.Point(1000, 376)
+        Me.lblSpike.Name = "lblSpike"
+        Me.lblSpike.Size = New System.Drawing.Size(113, 13)
+        Me.lblSpike.TabIndex = 23
+        Me.lblSpike.Text = "The spike filter is slow!"
+        '
+        'chkAlpha
+        '
+        Me.chkAlpha.AutoSize = True
+        Me.chkAlpha.Checked = True
+        Me.chkAlpha.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkAlpha.Location = New System.Drawing.Point(999, 408)
+        Me.chkAlpha.Name = "chkAlpha"
+        Me.chkAlpha.Size = New System.Drawing.Size(140, 17)
+        Me.chkAlpha.TabIndex = 24
+        Me.chkAlpha.Text = "Compute Alpha Channel"
+        Me.chkAlpha.UseVisualStyleBackColor = True
+        '
+        'chkInvert
+        '
+        Me.chkInvert.AutoSize = True
+        Me.chkInvert.Location = New System.Drawing.Point(999, 440)
+        Me.chkInvert.Name = "chkInvert"
+        Me.chkInvert.Size = New System.Drawing.Size(88, 17)
+        Me.chkInvert.TabIndex = 25
+        Me.chkInvert.Text = "Invert Output"
+        Me.chkInvert.UseVisualStyleBackColor = True
+        '
         'frmMain
         '
         Me.AllowDrop = True
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1163, 584)
+        Me.ClientSize = New System.Drawing.Size(1160, 580)
+        Me.Controls.Add(Me.chkInvert)
+        Me.Controls.Add(Me.chkAlpha)
+        Me.Controls.Add(Me.lblSpike)
+        Me.Controls.Add(Me.cmdOpen)
         Me.Controls.Add(Me.chkBW)
         Me.Controls.Add(Me.chkSpike)
         Me.Controls.Add(Me.chkLocked)
@@ -280,5 +329,9 @@ Partial Class frmMain
     Friend WithEvents chkLocked As System.Windows.Forms.CheckBox
     Friend WithEvents chkSpike As System.Windows.Forms.CheckBox
     Friend WithEvents chkBW As System.Windows.Forms.CheckBox
+    Friend WithEvents cmdOpen As System.Windows.Forms.Button
+    Friend WithEvents lblSpike As System.Windows.Forms.Label
+    Friend WithEvents chkAlpha As System.Windows.Forms.CheckBox
+    Friend WithEvents chkInvert As System.Windows.Forms.CheckBox
 
 End Class
