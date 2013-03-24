@@ -105,14 +105,14 @@
         If bitWorking Then
             If picDest.BorderStyle = BorderStyle.None Then
                 picDest.BorderStyle = BorderStyle.FixedSingle
-                If chkSpike.Checked Then
-                    lblSpike.Visible = True
-                End If
+                'If chkSpike.Checked Then
+                'lblSpike.Visible = True
+                'End If
             Else
                 picDest.BorderStyle = BorderStyle.None
-                If chkSpike.Checked Then
-                    lblSpike.Visible = False
-                End If
+                'If chkSpike.Checked Then
+                'lblSpike.Visible = False
+                'End If
             End If
         ElseIf bitUpdateNeeded Then
             Try
@@ -202,57 +202,84 @@
 
                 If chkSpike.Checked Then
                     Dim bitSpikeFound As Boolean
-                    Dim intSpikeFound As UInt32 = 0
-                    Dim bitFriendFound As Boolean
-                    Dim bitHasFriends As Boolean
-                    Dim objFirstAltLayer As Color
+                    Dim intSpikesFound As UInt32 = 0
+                    'Dim bitFriendFound As Boolean
+                    'Dim bitHasFriends As Boolean
+                    'Dim objFirstAltLayer As Color
+
+                    'Dim objTallFriend As UInt16
+                    'Dim objTargetPixel As UInt16
+                    'Dim intFriends As UInt16
+                    'Dim bitCouldBeSpike As Boolean
+
+                    Dim intMinFriends As UInt16 = tbSpike.Value
+
+                    Dim intLoops As UInt16 = 0
 
                     Do
+                        picDest.Image = objTarget
+                        Application.DoEvents()
+
+
+
+
                         bitSpikeFound = False
 
                         For X = 1 To picSource.Image.Size.Width - 2
                             For Y = 1 To picSource.Image.Size.Height - 2
-                                bitFriendFound = False
-                                bitHasFriends = False
-                                objColor = objTarget.GetPixel(X, Y)
 
-                                If objColor = objTarget.GetPixel(X - 1, Y - 1) Then
-                                    bitFriendFound = True
-                                Else
-                                    objFirstAltLayer = objTarget.GetPixel(X - 1, Y - 1)
-                                End If
-
-                                If objColor = objTarget.GetPixel(X, Y - 1) Then
-                                    bitHasFriends = True
-                                Else
-                                    If objFirstAltLayer = objTarget.GetPixel(X, Y - 1) Then
-                                        bitFriendFound = False
-                                    Else
-                                        bitHasFriends = True
-                                    End If
-                                End If
-
-                                FriendLogic(objColor, objTarget.GetPixel(X + 1, Y - 1), bitHasFriends, bitFriendFound, objFirstAltLayer)
-                                FriendLogic(objColor, objTarget.GetPixel(X + 1, Y), bitHasFriends, bitFriendFound, objFirstAltLayer)
-                                FriendLogic(objColor, objTarget.GetPixel(X + 1, Y + 1), bitHasFriends, bitFriendFound, objFirstAltLayer)
-                                FriendLogic(objColor, objTarget.GetPixel(X, Y + 1), bitHasFriends, bitFriendFound, objFirstAltLayer)
-                                FriendLogic(objColor, objTarget.GetPixel(X - 1, Y + 1), bitHasFriends, bitFriendFound, objFirstAltLayer)
-                                FriendLogic(objColor, objTarget.GetPixel(X - 1, Y), bitHasFriends, bitFriendFound, objFirstAltLayer)
-
-                                'Need to do one extra check back to the first.
-                                If Not bitHasFriends Then
-                                    If bitFriendFound Then
-                                        If objColor = objTarget.GetPixel(X - 1, Y - 1) Then
-                                            bitHasFriends = True
+                                If CheckForSpikeAt(X, Y, objTarget, intMinFriends, intSpikesFound) Then
+                                    bitSpikeFound = True
+                                    If X > 1 And X < picSource.Image.Size.Width - 2 Then
+                                        If Y > 1 And Y < picSource.Image.Size.Height - 2 Then
+                                            CheckForSpikeAt(X - 1, Y - 1, objTarget, intMinFriends, intSpikesFound)
+                                            CheckForSpikeAt(X, Y - 1, objTarget, intMinFriends, intSpikesFound)
+                                            CheckForSpikeAt(X + 1, Y - 1, objTarget, intMinFriends, intSpikesFound)
+                                            CheckForSpikeAt(X - 1, Y, objTarget, intMinFriends, intSpikesFound)
+                                            CheckForSpikeAt(X + 1, Y, objTarget, intMinFriends, intSpikesFound)
+                                            CheckForSpikeAt(X - 1, Y + 1, objTarget, intMinFriends, intSpikesFound)
+                                            CheckForSpikeAt(X, Y + 1, objTarget, intMinFriends, intSpikesFound)
+                                            CheckForSpikeAt(X + 1, Y + 1, objTarget, intMinFriends, intSpikesFound)
                                         End If
                                     End If
                                 End If
 
-                                If Not bitHasFriends Then
-                                    bitSpikeFound = True
-                                    intSpikeFound += 1
-                                    objTarget.SetPixel(X, Y, objFirstAltLayer)
-                                End If
+                                'objTallFriend = 255
+                                'objTargetPixel = objTarget.GetPixel(X, Y).R
+                                'intFriends = 0
+
+                                'bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X - 1, Y - 1).R, objTallFriend, intFriends)
+                                'If bitCouldBeSpike Then
+                                '    bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X, Y - 1).R, objTallFriend, intFriends)
+                                'End If
+                                'If bitCouldBeSpike Then
+                                '    bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X + 1, Y - 1).R, objTallFriend, intFriends)
+                                'End If
+                                'If bitCouldBeSpike Then
+                                '    bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X - 1, Y).R, objTallFriend, intFriends)
+                                'End If
+                                'If bitCouldBeSpike Then
+                                '    bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X + 1, Y).R, objTallFriend, intFriends)
+                                'End If
+                                'If bitCouldBeSpike Then
+                                '    bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X - 1, Y + 1).R, objTallFriend, intFriends)
+                                'End If
+                                'If bitCouldBeSpike Then
+                                '    bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X, Y + 1).R, objTallFriend, intFriends)
+                                'End If
+                                'If bitCouldBeSpike Then
+                                '    bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X + 1, Y + 1).R, objTallFriend, intFriends)
+                                'End If
+
+                                'If bitCouldBeSpike Then
+                                '    If intFriends < intMinFriends Then
+                                '        'If objTallFriend.R > objTargetPixel.R Then
+                                '        objTarget.SetPixel(X, Y, Color.FromArgb(objTallFriend, objTallFriend, objTallFriend))
+                                '        intSpikesFound += 1
+                                '        bitSpikeFound = True
+                                '        'End If
+                                '    End If
+                                'End If
                             Next
 
                             If bitUpdateNeeded Then
@@ -260,10 +287,12 @@
                                 Exit Sub
                             End If
 
-                            Me.Text = "Image To STL Converter - Found " & intSpikeFound & " spikes..."
+                            Me.Text = "Image To STL Converter - Found " & intSpikesFound & " spikes in " & intLoops & " loops..."
                             Application.DoEvents()
+
                         Next
-                    Loop While bitSpikeFound
+                        intLoops += 1
+                    Loop While bitSpikeFound And intLoops < 10
                 End If
 
                 picDest.Image = objTarget
@@ -287,32 +316,136 @@
             bitWorking = False
             cmdCreate.Enabled = True
             picDest.BorderStyle = BorderStyle.FixedSingle
-            lblSpike.Visible = True
+            'lblSpike.Visible = True
         End If
     End Sub
 
-    Sub FriendLogic(ByRef objColor1 As Color, _
-                    ByRef objColor2 As Color, _
-                    ByRef bitHasFriends As Boolean, _
-                    ByRef bitFriendFound As Boolean, _
-                    ByRef objFirstAltLayer As Color)
+    Function CheckForSpikeAt(ByRef X As UInt16, ByRef Y As UInt16, ByRef objTarget As Bitmap, ByRef intMinFriends As UInt16, ByRef intSpikesFound As UInt32) As Boolean
+        Dim objTallFriend As UInt16 = 255
+        Dim objTargetPixel As UInt16 = objTarget.GetPixel(X, Y).R
+        Dim intFriends As UInt16 = 0
+        Dim bitCouldBeSpike As Boolean = True
 
-        If Not bitHasFriends Then
-            If objColor1 = objColor2 Then
-                If bitFriendFound Then
-                    bitHasFriends = True
-                Else
-                    bitFriendFound = True
+        bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X - 1, Y - 1).R, objTallFriend, intFriends)
+        If bitCouldBeSpike Then
+            bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X, Y - 1).R, objTallFriend, intFriends)
+        End If
+        If bitCouldBeSpike Then
+            bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X + 1, Y - 1).R, objTallFriend, intFriends)
+        End If
+        If bitCouldBeSpike Then
+            bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X - 1, Y).R, objTallFriend, intFriends)
+        End If
+        If bitCouldBeSpike Then
+            bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X + 1, Y).R, objTallFriend, intFriends)
+        End If
+        If bitCouldBeSpike Then
+            bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X - 1, Y + 1).R, objTallFriend, intFriends)
+        End If
+        If bitCouldBeSpike Then
+            bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X, Y + 1).R, objTallFriend, intFriends)
+        End If
+        If bitCouldBeSpike Then
+            bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X + 1, Y + 1).R, objTallFriend, intFriends)
+        End If
+
+        If bitCouldBeSpike Then
+            If intFriends < intMinFriends Then
+                'If objTallFriend.R > objTargetPixel.R Then
+                If objTargetPixel = objTallFriend Then
+                    Application.DoEvents()
                 End If
+                objTarget.SetPixel(X, Y, Color.FromArgb(objTallFriend, objTallFriend, objTallFriend))
+                intSpikesFound += 1
+                Return True
+                'End iF
             Else
-                If objColor2 = objFirstAltLayer Then
-                    bitFriendFound = False
-                Else
-                    bitHasFriends = True
-                End If
+                Return False
             End If
+        Else
+            Return False
         End If
-    End Sub
+    End Function
+
+    Function FriendLogic(ByRef objTarget As UInt16, ByRef objFreind As UInt16, ByRef objTallFriend As UInt16, ByRef intFreindCount As UInt16) As Boolean
+        'Returns true if a freind isn't taller.
+        If objTarget > objFreind Then
+            Return False
+        Else
+            If objFreind < objTallFriend And objFreind > objTarget Then
+                objTallFriend = objFreind
+            ElseIf objFreind = objTarget Then
+                intFreindCount += 1
+            End If
+            Return True
+        End If
+    End Function
+
+    'bitFriendFound = False
+    'bitHasFriends = False
+    'objColor = objTarget.GetPixel(X, Y)
+
+    'If objColor = objTarget.GetPixel(X - 1, Y - 1) Then
+    '    bitFriendFound = True
+    'Else
+    '    If objTarget.GetPixel(X - 1, Y - 1).R > objColor.R Then
+    '        objFirstAltLayer = objTarget.GetPixel(X - 1, Y - 1)
+    '    End If
+    'End If
+
+    'If objColor = objTarget.GetPixel(X, Y - 1) Then
+    '    bitHasFriends = True
+    'Else
+    '    If objFirstAltLayer = objTarget.GetPixel(X, Y - 1) Then
+    '        bitFriendFound = False
+    '    Else
+    '        bitHasFriends = True
+    '    End If
+    'End If
+
+    'FriendLogic(objColor, objTarget.GetPixel(X + 1, Y - 1), bitHasFriends, bitFriendFound, objFirstAltLayer)
+    'FriendLogic(objColor, objTarget.GetPixel(X + 1, Y), bitHasFriends, bitFriendFound, objFirstAltLayer)
+    'FriendLogic(objColor, objTarget.GetPixel(X + 1, Y + 1), bitHasFriends, bitFriendFound, objFirstAltLayer)
+    'FriendLogic(objColor, objTarget.GetPixel(X, Y + 1), bitHasFriends, bitFriendFound, objFirstAltLayer)
+    'FriendLogic(objColor, objTarget.GetPixel(X - 1, Y + 1), bitHasFriends, bitFriendFound, objFirstAltLayer)
+    'FriendLogic(objColor, objTarget.GetPixel(X - 1, Y), bitHasFriends, bitFriendFound, objFirstAltLayer)
+
+    ''Need to do one extra check back to the first.
+    'If Not bitHasFriends Then
+    '    If bitFriendFound Then
+    '        If objColor = objTarget.GetPixel(X - 1, Y - 1) Then
+    '            bitHasFriends = True
+    '        End If
+    '    End If
+    'End If
+
+    'If Not bitHasFriends Then
+    '    bitSpikeFound = True
+    '    intSpikeFound += 1
+    '    objTarget.SetPixel(X, Y, objFirstAltLayer)
+    'End If
+    'Sub FriendLogic(ByRef objColor1 As Color, _
+    '                ByRef objColor2 As Color, _
+    '                ByRef bitHasFriends As Boolean, _
+    '                ByRef bitFriendFound As Boolean, _
+    '                ByRef objFirstAltLayer As Color)
+
+    '    If Not bitHasFriends Then
+    '        If objColor1 = objColor2 Then
+    '            If bitFriendFound Then
+    '                bitHasFriends = True
+    '            Else
+    '                bitFriendFound = True
+    '            End If
+    '        Else
+    '            If objColor2 = objFirstAltLayer Then
+    '                bitFriendFound = False
+    '            Else
+    '                bitHasFriends = True
+    '            End If
+    '        End If
+    '    End If
+    'End Sub
 
 
     Private Sub txtBase_TextChanged(sender As Object, e As EventArgs) Handles txtBase.TextChanged
@@ -459,6 +592,9 @@
         Dim intHeights(objImage.Size.Width + 2, objImage.Size.Height + 2) As Single
         Dim intTotalHeight As UInt16 = Val(txtZ.Text) + Val(txtBase.Text)
 
+        Dim bitTopDone(objImage.Size.Width + 2, objImage.Size.Height + 2) As Boolean
+        Dim bitBottomDone(2, 2) As Boolean
+
         Dim intMinDepth As UInt32 = 255
         Dim bitDoBase As Boolean = True
 
@@ -512,6 +648,9 @@
                 .intZ3 = 0
             End With
             WriteTriangle(objTriangle, objFile)
+        Else
+            'Waste not want not!
+            ReDim bitBottomDone(objImage.Size.Width + 2, objImage.Size.Height + 2)
         End If
 
 
@@ -746,9 +885,12 @@
 
     Private Sub chkSpike_CheckedChanged(sender As Object, e As EventArgs) Handles chkSpike.CheckedChanged
         bitUpdateNeeded = True
-        If chkSpike.Checked = False Then
+        If chkSpike.Checked Then
+            tbSpike.Enabled = True
+        Else
+            tbSpike.Enabled = False
             Me.Text = "Image To STL Converter"
-            lblSpike.Visible = True
+            'lblSpike.Visible = True
         End If
     End Sub
 
@@ -800,6 +942,10 @@
     End Sub
 
     Private Sub chkInvert_CheckedChanged(sender As Object, e As EventArgs) Handles chkInvert.CheckedChanged
+        bitUpdateNeeded = True
+    End Sub
+
+    Private Sub tbSpike_Scroll(sender As Object, e As EventArgs) Handles tbSpike.Scroll
         bitUpdateNeeded = True
     End Sub
 End Class

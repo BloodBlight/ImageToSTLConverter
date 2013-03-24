@@ -45,12 +45,13 @@ Partial Class frmMain
         Me.chkSpike = New System.Windows.Forms.CheckBox()
         Me.chkBW = New System.Windows.Forms.CheckBox()
         Me.cmdOpen = New System.Windows.Forms.Button()
-        Me.lblSpike = New System.Windows.Forms.Label()
         Me.chkAlpha = New System.Windows.Forms.CheckBox()
         Me.chkInvert = New System.Windows.Forms.CheckBox()
+        Me.tbSpike = New System.Windows.Forms.TrackBar()
         CType(Me.picSource, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.picDest, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbBWTH, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.tbSpike, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'picSource
@@ -215,6 +216,8 @@ Partial Class frmMain
         'chkSpike
         '
         Me.chkSpike.AutoSize = True
+        Me.chkSpike.Checked = True
+        Me.chkSpike.CheckState = System.Windows.Forms.CheckState.Checked
         Me.chkSpike.Location = New System.Drawing.Point(999, 356)
         Me.chkSpike.Name = "chkSpike"
         Me.chkSpike.Size = New System.Drawing.Size(78, 17)
@@ -241,15 +244,6 @@ Partial Class frmMain
         Me.cmdOpen.Text = "Open Image"
         Me.cmdOpen.UseVisualStyleBackColor = True
         '
-        'lblSpike
-        '
-        Me.lblSpike.AutoSize = True
-        Me.lblSpike.Location = New System.Drawing.Point(1000, 376)
-        Me.lblSpike.Name = "lblSpike"
-        Me.lblSpike.Size = New System.Drawing.Size(113, 13)
-        Me.lblSpike.TabIndex = 23
-        Me.lblSpike.Text = "The spike filter is slow!"
-        '
         'chkAlpha
         '
         Me.chkAlpha.AutoSize = True
@@ -272,15 +266,26 @@ Partial Class frmMain
         Me.chkInvert.Text = "Invert Output"
         Me.chkInvert.UseVisualStyleBackColor = True
         '
+        'tbSpike
+        '
+        Me.tbSpike.LargeChange = 1
+        Me.tbSpike.Location = New System.Drawing.Point(1078, 356)
+        Me.tbSpike.Maximum = 9
+        Me.tbSpike.Minimum = 2
+        Me.tbSpike.Name = "tbSpike"
+        Me.tbSpike.Size = New System.Drawing.Size(76, 45)
+        Me.tbSpike.TabIndex = 26
+        Me.tbSpike.Value = 4
+        '
         'frmMain
         '
         Me.AllowDrop = True
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1160, 580)
+        Me.Controls.Add(Me.tbSpike)
         Me.Controls.Add(Me.chkInvert)
         Me.Controls.Add(Me.chkAlpha)
-        Me.Controls.Add(Me.lblSpike)
         Me.Controls.Add(Me.cmdOpen)
         Me.Controls.Add(Me.chkBW)
         Me.Controls.Add(Me.chkSpike)
@@ -305,6 +310,7 @@ Partial Class frmMain
         CType(Me.picSource, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.picDest, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tbBWTH, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.tbSpike, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -330,8 +336,8 @@ Partial Class frmMain
     Friend WithEvents chkSpike As System.Windows.Forms.CheckBox
     Friend WithEvents chkBW As System.Windows.Forms.CheckBox
     Friend WithEvents cmdOpen As System.Windows.Forms.Button
-    Friend WithEvents lblSpike As System.Windows.Forms.Label
     Friend WithEvents chkAlpha As System.Windows.Forms.CheckBox
     Friend WithEvents chkInvert As System.Windows.Forms.CheckBox
+    Friend WithEvents tbSpike As System.Windows.Forms.TrackBar
 
 End Class
