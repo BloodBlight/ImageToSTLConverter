@@ -69,13 +69,14 @@
     Private Sub cmdCreate_Click(sender As Object, e As EventArgs) Handles cmdCreate.Click
         SetFormMode(False)
         Application.DoEvents()
-        If chkSpike.Checked = False Then
-            Dim objResult As DialogResult = MessageBox.Show("The spike filter is NOT on, would you like to run that now?", "Spike Filter", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question)
+        If chkSpike.Checked = False And chkAntiSpike.Checked = False Then
+            Dim objResult As DialogResult = MessageBox.Show("The spike filters are NOT on, would you like to run them now?", "Spike Filters", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question)
             If objResult = Windows.Forms.DialogResult.Cancel Then
                 SetFormMode(True)
                 Exit Sub
             ElseIf objResult = Windows.Forms.DialogResult.Yes Then
                 chkSpike.Checked = True
+                chkAntiSpike.Checked = True
                 bitUpdateNeeded = True
                 Do While bitUpdateNeeded
                     Application.DoEvents()
@@ -103,13 +104,13 @@
 
     Private Sub tmrUpdate_Tick(sender As Object, e As EventArgs) Handles tmrUpdate.Tick
         If bitWorking Then
-            If picDest.BorderStyle = BorderStyle.None Then
-                picDest.BorderStyle = BorderStyle.FixedSingle
+            If picDest.BackColor = Color.White Then
+                picDest.BackColor = Color.Black
                 'If chkSpike.Checked Then
                 'lblSpike.Visible = True
                 'End If
             Else
-                picDest.BorderStyle = BorderStyle.None
+                picDest.BackColor = Color.White
                 'If chkSpike.Checked Then
                 'lblSpike.Visible = False
                 'End If
@@ -120,7 +121,8 @@
                 bitUpdateNeeded = False
                 bitWorking = True
                 cmdCreate.Enabled = False
-                picDest.BorderStyle = BorderStyle.None
+                picDest.BackColor = Color.White
+
 
                 Application.DoEvents()
 
@@ -166,6 +168,7 @@
 
 
                 objSource = picSource.Image
+                picDest.Image = objTarget
 
                 For X = 1 To picSource.Image.Size.Width
                     For Y = 1 To picSource.Image.Size.Height
@@ -200,28 +203,19 @@
                     End If
                 Next
 
+
+
+                Dim intLoops As UInt16 = 0
+                Dim intSpikesFound As UInt32 = 0
+
                 If chkSpike.Checked Then
                     Dim bitSpikeFound As Boolean
-                    Dim intSpikesFound As UInt32 = 0
-                    'Dim bitFriendFound As Boolean
-                    'Dim bitHasFriends As Boolean
-                    'Dim objFirstAltLayer As Color
-
-                    'Dim objTallFriend As UInt16
-                    'Dim objTargetPixel As UInt16
-                    'Dim intFriends As UInt16
-                    'Dim bitCouldBeSpike As Boolean
 
                     Dim intMinFriends As UInt16 = tbSpike.Value
-
-                    Dim intLoops As UInt16 = 0
 
                     Do
                         picDest.Image = objTarget
                         Application.DoEvents()
-
-
-
 
                         bitSpikeFound = False
 
@@ -258,6 +252,54 @@
                     Loop While bitSpikeFound And intLoops < 10
                 End If
 
+
+
+
+                If chkAntiSpike.Checked Then
+                    Dim bitSpikeFound As Boolean
+
+                    Dim intMinFriends As UInt16 = tbAntiSpike.Value
+
+
+                    Do
+                        picDest.Image = objTarget
+                        Application.DoEvents()
+
+                        bitSpikeFound = False
+
+                        For X = 1 To picSource.Image.Size.Width - 2
+                            For Y = 1 To picSource.Image.Size.Height - 2
+
+                                If CheckForSpikeAt(X, Y, objTarget, intMinFriends, intSpikesFound, True) Then
+                                    bitSpikeFound = True
+                                    If X > 1 And X < picSource.Image.Size.Width - 2 Then
+                                        If Y > 1 And Y < picSource.Image.Size.Height - 2 Then
+                                            CheckForSpikeAt(X - 1, Y - 1, objTarget, intMinFriends, intSpikesFound, True)
+                                            CheckForSpikeAt(X, Y - 1, objTarget, intMinFriends, intSpikesFound, True)
+                                            CheckForSpikeAt(X + 1, Y - 1, objTarget, intMinFriends, intSpikesFound, True)
+                                            CheckForSpikeAt(X - 1, Y, objTarget, intMinFriends, intSpikesFound, True)
+                                            CheckForSpikeAt(X + 1, Y, objTarget, intMinFriends, intSpikesFound, True)
+                                            CheckForSpikeAt(X - 1, Y + 1, objTarget, intMinFriends, intSpikesFound, True)
+                                            CheckForSpikeAt(X, Y + 1, objTarget, intMinFriends, intSpikesFound, True)
+                                            CheckForSpikeAt(X + 1, Y + 1, objTarget, intMinFriends, intSpikesFound, True)
+                                        End If
+                                    End If
+                                End If
+                            Next
+
+                            If bitUpdateNeeded Then
+                                bitWorking = False
+                                Exit Sub
+                            End If
+
+                            Me.Text = "Image To STL Converter - Found " & intSpikesFound & " spikes in " & intLoops & " loops..."
+                            Application.DoEvents()
+
+                        Next
+                        intLoops += 1
+                    Loop While bitSpikeFound And intLoops < 20
+                End If
+
                 picDest.Image = objTarget
             Catch ex As Exception
                 intErrorCount += 1
@@ -278,46 +320,44 @@
 
             bitWorking = False
             cmdCreate.Enabled = True
-            picDest.BorderStyle = BorderStyle.FixedSingle
+            picDest.BackColor = Color.Black
             'lblSpike.Visible = True
         End If
     End Sub
 
-    Function CheckForSpikeAt(ByRef X As UInt16, ByRef Y As UInt16, ByRef objTarget As Bitmap, ByRef intMinFriends As UInt16, ByRef intSpikesFound As UInt32) As Boolean
+    Function CheckForSpikeAt(ByRef X As UInt16, ByRef Y As UInt16, ByRef objTarget As Bitmap, ByRef intMinFriends As UInt16, ByRef intSpikesFound As UInt32, Optional ByRef bitAntiMode As Boolean = False) As Boolean
         Dim objTallFriend As UInt16 = 255
         Dim objTargetPixel As UInt16 = objTarget.GetPixel(X, Y).R
         Dim intFriends As UInt16 = 0
         Dim bitCouldBeSpike As Boolean = True
 
-        bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X - 1, Y - 1).R, objTallFriend, intFriends)
+        If bitAntiMode Then objTallFriend = 0
+
+        bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X - 1, Y - 1).R, objTallFriend, intFriends, bitAntiMode)
         If bitCouldBeSpike Then
-            bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X, Y - 1).R, objTallFriend, intFriends)
+            bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X, Y - 1).R, objTallFriend, intFriends, bitAntiMode)
         End If
         If bitCouldBeSpike Then
-            bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X + 1, Y - 1).R, objTallFriend, intFriends)
+            bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X + 1, Y - 1).R, objTallFriend, intFriends, bitAntiMode)
         End If
         If bitCouldBeSpike Then
-            bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X - 1, Y).R, objTallFriend, intFriends)
+            bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X - 1, Y).R, objTallFriend, intFriends, bitAntiMode)
         End If
         If bitCouldBeSpike Then
-            bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X + 1, Y).R, objTallFriend, intFriends)
+            bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X + 1, Y).R, objTallFriend, intFriends, bitAntiMode)
         End If
         If bitCouldBeSpike Then
-            bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X - 1, Y + 1).R, objTallFriend, intFriends)
+            bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X - 1, Y + 1).R, objTallFriend, intFriends, bitAntiMode)
         End If
         If bitCouldBeSpike Then
-            bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X, Y + 1).R, objTallFriend, intFriends)
+            bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X, Y + 1).R, objTallFriend, intFriends, bitAntiMode)
         End If
         If bitCouldBeSpike Then
-            bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X + 1, Y + 1).R, objTallFriend, intFriends)
+            bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X + 1, Y + 1).R, objTallFriend, intFriends, bitAntiMode)
         End If
 
         If bitCouldBeSpike Then
             If intFriends < intMinFriends Then
-                'If objTallFriend.R > objTargetPixel.R Then
-                If objTargetPixel = objTallFriend Then
-                    Application.DoEvents()
-                End If
                 objTarget.SetPixel(X, Y, Color.FromArgb(objTallFriend, objTallFriend, objTallFriend))
                 intSpikesFound += 1
                 Return True
@@ -330,17 +370,31 @@
         End If
     End Function
 
-    Function FriendLogic(ByRef objTarget As UInt16, ByRef objFreind As UInt16, ByRef objTallFriend As UInt16, ByRef intFreindCount As UInt16) As Boolean
-        'Returns true if a freind isn't taller.
-        If objTarget > objFreind Then
-            Return False
-        Else
-            If objFreind < objTallFriend And objFreind > objTarget Then
-                objTallFriend = objFreind
-            ElseIf objFreind = objTarget Then
-                intFreindCount += 1
+    Function FriendLogic(ByRef objTarget As UInt16, ByRef objFreind As UInt16, ByRef objTallFriend As UInt16, ByRef intFreindCount As UInt16, ByRef bitAntiMode As Boolean) As Boolean
+        If bitAntiMode Then
+            'Returns true if a freind isn't shorter.
+            If objTarget < objFreind Then
+                Return False
+            Else
+                If objFreind > objTallFriend And objFreind < objTarget Then
+                    objTallFriend = objFreind
+                ElseIf objFreind = objTarget Then
+                    intFreindCount += 1
+                End If
+                Return True
             End If
-            Return True
+        Else
+            'Returns true if a freind isn't taller.
+            If objTarget > objFreind Then
+                Return False
+            Else
+                If objFreind < objTallFriend And objFreind > objTarget Then
+                    objTallFriend = objFreind
+                ElseIf objFreind = objTarget Then
+                    intFreindCount += 1
+                End If
+                Return True
+            End If
         End If
     End Function
 
@@ -350,11 +404,6 @@
         With txtBase
             If SafeNumber(.Text) Then
                 .SelectionStart = .Text.Length
-            End If
-            If Val(.Text) > 0 Then
-                txtBaseBoarder.Enabled = True
-            Else
-                txtBaseBoarder.Enabled = False
             End If
         End With
     End Sub
@@ -377,14 +426,6 @@
         End If
         Return 0
     End Function
-
-    Private Sub txtBaseBoarder_TextChanged(sender As Object, e As EventArgs) Handles txtBaseBoarder.TextChanged
-        With txtBaseBoarder
-            If SafeNumber(.Text) Then
-                .SelectionStart = .Text.Length
-            End If
-        End With
-    End Sub
 
     Private Sub txtX_TextChanged(sender As Object, e As EventArgs) Handles txtX.TextChanged
         If Not bitUpdateingSize Then
@@ -529,7 +570,7 @@
                 .intY3 = (intImageHeight + 1) * dblScaleY
                 .intZ3 = 0
             End With
-            'WriteTriangle(objTriangle, objFile)
+            WriteTriangle(objTriangle, objFile)
 
             objTriangleC += 1
             With objTriangle
@@ -545,7 +586,7 @@
                 .intY3 = (intImageHeight + 1) * dblScaleY
                 .intZ3 = 0
             End With
-            'WriteTriangle(objTriangle, objFile)
+            WriteTriangle(objTriangle, objFile)
         Else
             'Waste not want not!
             ReDim bitBottomDone(objImage.Size.Width + 2, objImage.Size.Height + 2)
@@ -930,18 +971,15 @@
         Next
     End Sub
 
-    Private Sub txtRez_TextChanged(sender As Object, e As EventArgs) Handles txtRez.TextChanged
+    Private Sub txtRez_TextChanged(sender As Object, e As EventArgs)
         bitUpdateNeeded = True
     End Sub
 
     Private Sub chkSpike_CheckedChanged(sender As Object, e As EventArgs) Handles chkSpike.CheckedChanged
         bitUpdateNeeded = True
-        If chkSpike.Checked Then
-            tbSpike.Enabled = True
-        Else
-            tbSpike.Enabled = False
+        tbSpike.Enabled = chkSpike.Checked
+        If Not chkSpike.Checked Then
             Me.Text = "Image To STL Converter"
-            'lblSpike.Visible = True
         End If
     End Sub
 
@@ -973,19 +1011,25 @@
 
     Sub SetFormMode(ByRef bitMode As Boolean)
         txtBase.Enabled = bitMode
-        txtRez.Enabled = bitMode
-        txtBaseBoarder.Enabled = bitMode
         txtX.Enabled = bitMode
         txtY.Enabled = bitMode
         txtZ.Enabled = bitMode
         chkBW.Enabled = bitMode
         chkSpike.Enabled = bitMode
+        chkAntiSpike.Enabled = bitMode
         chkLocked.Enabled = bitMode
         chkAlpha.Enabled = bitMode
         chkInvert.Enabled = bitMode
         tbBWTH.Enabled = bitMode
         cmdCreate.Enabled = bitMode
         cmdOpen.Enabled = bitMode
+        If bitMode = True Then
+            tbSpike.Enabled = chkSpike.Checked
+            tbAntiSpike.Enabled = chkAntiSpike.Checked
+        Else
+            tbSpike.Enabled = bitMode
+            tbAntiSpike.Enabled = bitMode
+        End If
     End Sub
 
     Private Sub chkAlpha_CheckedChanged(sender As Object, e As EventArgs) Handles chkAlpha.CheckedChanged
@@ -998,6 +1042,14 @@
 
     Private Sub tbSpike_Scroll(sender As Object, e As EventArgs) Handles tbSpike.Scroll
         bitUpdateNeeded = True
+    End Sub
+
+    Private Sub chkAntiSpike_CheckedChanged(sender As Object, e As EventArgs) Handles chkAntiSpike.CheckedChanged
+        bitUpdateNeeded = True
+        tbAntiSpike.Enabled = chkAntiSpike.Checked
+        If Not chkAntiSpike.Checked Then
+            Me.Text = "Image To STL Converter"
+        End If
     End Sub
 End Class
 
