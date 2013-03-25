@@ -216,8 +216,6 @@ Partial Class frmMain
         'chkSpike
         '
         Me.chkSpike.AutoSize = True
-        Me.chkSpike.Checked = True
-        Me.chkSpike.CheckState = System.Windows.Forms.CheckState.Checked
         Me.chkSpike.Location = New System.Drawing.Point(999, 356)
         Me.chkSpike.Name = "chkSpike"
         Me.chkSpike.Size = New System.Drawing.Size(78, 17)
@@ -268,6 +266,7 @@ Partial Class frmMain
         '
         'tbSpike
         '
+        Me.tbSpike.Enabled = False
         Me.tbSpike.LargeChange = 1
         Me.tbSpike.Location = New System.Drawing.Point(1078, 356)
         Me.tbSpike.Maximum = 9

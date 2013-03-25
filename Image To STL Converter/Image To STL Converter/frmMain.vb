@@ -243,43 +243,6 @@
                                         End If
                                     End If
                                 End If
-
-                                'objTallFriend = 255
-                                'objTargetPixel = objTarget.GetPixel(X, Y).R
-                                'intFriends = 0
-
-                                'bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X - 1, Y - 1).R, objTallFriend, intFriends)
-                                'If bitCouldBeSpike Then
-                                '    bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X, Y - 1).R, objTallFriend, intFriends)
-                                'End If
-                                'If bitCouldBeSpike Then
-                                '    bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X + 1, Y - 1).R, objTallFriend, intFriends)
-                                'End If
-                                'If bitCouldBeSpike Then
-                                '    bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X - 1, Y).R, objTallFriend, intFriends)
-                                'End If
-                                'If bitCouldBeSpike Then
-                                '    bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X + 1, Y).R, objTallFriend, intFriends)
-                                'End If
-                                'If bitCouldBeSpike Then
-                                '    bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X - 1, Y + 1).R, objTallFriend, intFriends)
-                                'End If
-                                'If bitCouldBeSpike Then
-                                '    bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X, Y + 1).R, objTallFriend, intFriends)
-                                'End If
-                                'If bitCouldBeSpike Then
-                                '    bitCouldBeSpike = FriendLogic(objTargetPixel, objTarget.GetPixel(X + 1, Y + 1).R, objTallFriend, intFriends)
-                                'End If
-
-                                'If bitCouldBeSpike Then
-                                '    If intFriends < intMinFriends Then
-                                '        'If objTallFriend.R > objTargetPixel.R Then
-                                '        objTarget.SetPixel(X, Y, Color.FromArgb(objTallFriend, objTallFriend, objTallFriend))
-                                '        intSpikesFound += 1
-                                '        bitSpikeFound = True
-                                '        'End If
-                                '    End If
-                                'End If
                             Next
 
                             If bitUpdateNeeded Then
@@ -381,71 +344,6 @@
         End If
     End Function
 
-    'bitFriendFound = False
-    'bitHasFriends = False
-    'objColor = objTarget.GetPixel(X, Y)
-
-    'If objColor = objTarget.GetPixel(X - 1, Y - 1) Then
-    '    bitFriendFound = True
-    'Else
-    '    If objTarget.GetPixel(X - 1, Y - 1).R > objColor.R Then
-    '        objFirstAltLayer = objTarget.GetPixel(X - 1, Y - 1)
-    '    End If
-    'End If
-
-    'If objColor = objTarget.GetPixel(X, Y - 1) Then
-    '    bitHasFriends = True
-    'Else
-    '    If objFirstAltLayer = objTarget.GetPixel(X, Y - 1) Then
-    '        bitFriendFound = False
-    '    Else
-    '        bitHasFriends = True
-    '    End If
-    'End If
-
-    'FriendLogic(objColor, objTarget.GetPixel(X + 1, Y - 1), bitHasFriends, bitFriendFound, objFirstAltLayer)
-    'FriendLogic(objColor, objTarget.GetPixel(X + 1, Y), bitHasFriends, bitFriendFound, objFirstAltLayer)
-    'FriendLogic(objColor, objTarget.GetPixel(X + 1, Y + 1), bitHasFriends, bitFriendFound, objFirstAltLayer)
-    'FriendLogic(objColor, objTarget.GetPixel(X, Y + 1), bitHasFriends, bitFriendFound, objFirstAltLayer)
-    'FriendLogic(objColor, objTarget.GetPixel(X - 1, Y + 1), bitHasFriends, bitFriendFound, objFirstAltLayer)
-    'FriendLogic(objColor, objTarget.GetPixel(X - 1, Y), bitHasFriends, bitFriendFound, objFirstAltLayer)
-
-    ''Need to do one extra check back to the first.
-    'If Not bitHasFriends Then
-    '    If bitFriendFound Then
-    '        If objColor = objTarget.GetPixel(X - 1, Y - 1) Then
-    '            bitHasFriends = True
-    '        End If
-    '    End If
-    'End If
-
-    'If Not bitHasFriends Then
-    '    bitSpikeFound = True
-    '    intSpikeFound += 1
-    '    objTarget.SetPixel(X, Y, objFirstAltLayer)
-    'End If
-    'Sub FriendLogic(ByRef objColor1 As Color, _
-    '                ByRef objColor2 As Color, _
-    '                ByRef bitHasFriends As Boolean, _
-    '                ByRef bitFriendFound As Boolean, _
-    '                ByRef objFirstAltLayer As Color)
-
-    '    If Not bitHasFriends Then
-    '        If objColor1 = objColor2 Then
-    '            If bitFriendFound Then
-    '                bitHasFriends = True
-    '            Else
-    '                bitFriendFound = True
-    '            End If
-    '        Else
-    '            If objColor2 = objFirstAltLayer Then
-    '                bitFriendFound = False
-    '            Else
-    '                bitHasFriends = True
-    '            End If
-    '        End If
-    '    End If
-    'End Sub
 
 
     Private Sub txtBase_TextChanged(sender As Object, e As EventArgs) Handles txtBase.TextChanged
@@ -631,7 +529,7 @@
                 .intY3 = (intImageHeight + 1) * dblScaleY
                 .intZ3 = 0
             End With
-            WriteTriangle(objTriangle, objFile)
+            'WriteTriangle(objTriangle, objFile)
 
             objTriangleC += 1
             With objTriangle
@@ -647,110 +545,263 @@
                 .intY3 = (intImageHeight + 1) * dblScaleY
                 .intZ3 = 0
             End With
-            WriteTriangle(objTriangle, objFile)
+            'WriteTriangle(objTriangle, objFile)
         Else
             'Waste not want not!
             ReDim bitBottomDone(objImage.Size.Width + 2, objImage.Size.Height + 2)
         End If
 
+        Dim I As UInt16
+        Dim intTemp1 As UInt16
+        Dim intTemp2 As UInt16
+        'Dim intHeight As Single
+        Dim intMatchSize As UInt16
+        Dim intBlockSize As UInt16
+        Dim bitNoMatch As Boolean
 
-        For X = 1 To objImage.Size.Width + 1
-            For Y = 1 To objImage.Size.Height + 1
-                'If not bitDoBase, we know we have to map everything, skip the check.
-                If (Not bitDoBase) OrElse _
-                    intHeights(X, Y) > 0 OrElse _
-                    intHeights(X - 1, Y) > 0 OrElse _
-                    intHeights(X, Y - 1) > 0 OrElse _
-                    intHeights(X - 1, Y - 1) > 0 Then
+        'I should NOT need to do this!
+        For X = 0 To intImageWidth
+            For Y = 0 To intImageHeight
+                bitTopDone(X, Y) = False
+            Next
+        Next
 
-                    If X = objImage.Size.Width And Y = 10 Then
-                        Application.DoEvents()
-                    End If
+        For X = 0 To intImageWidth
+            For Y = 0 To intImageHeight
+                If Not bitTopDone(X, Y) Then
+                    'If not bitDoBase, we know we have to map everything, skip the check.
+                    If (Not bitDoBase) OrElse _
+                        intHeights(X, Y) > 0 OrElse _
+                        intHeights(X + 1, Y) > 0 OrElse _
+                        intHeights(X, Y + 1) > 0 OrElse _
+                        intHeights(X + 1, Y + 1) > 0 Then
 
-                    'Above
-                    objTriangleC += 1
-                    With objTriangle
-                        .intX1 = X * dblScaleX
-                        .intY1 = Y * dblScaleY
-                        .intZ1 = intHeights(X, Y)
+                        intBlockSize = 0
+                        bitNoMatch = False
 
-                        .intX2 = (X - 1) * dblScaleX
-                        .intY2 = (Y - 1) * dblScaleY
-                        .intZ2 = intHeights(X - 1, Y - 1)
+                        intTemp1 = intImageWidth - X
+                        intTemp2 = intImageHeight - Y
+                        If intTemp1 > intTemp2 Then
+                            intMatchSize = intTemp1
+                        Else
+                            intMatchSize = intTemp2
+                        End If
 
-                        .intX3 = X * dblScaleX
-                        .intY3 = (Y - 1) * dblScaleY
-                        .intZ3 = intHeights(X, Y - 1)
-                    End With
-                    WriteTriangle(objTriangle, objFile)
+                        
+                        For I = 1 To intMatchSize
+                            For intTemp1 = 0 To I
+                                'Yes I know we do one ex6tra check per loop.
+                                If bitTopDone(X, Y) Then
+                                    bitNoMatch = True
+                                    Exit For
+                                Else
+                                    If intHeights(X, Y) <> intHeights(X + I, Y + intTemp1) Then
+                                        bitNoMatch = True
+                                        Exit For
+                                    ElseIf intHeights(X, Y) <> intHeights(X + intTemp1, Y + I) Then
+                                        bitNoMatch = True
+                                        Exit For
+                                    End If
+                                End If
+                            Next
+                            If bitNoMatch Then
+                                Exit For
+                            Else
+                                intBlockSize = I - 1
+                            End If
+                        Next
 
-                    'Left
-                    objTriangleC += 1
-                    With objTriangle
-                        .intX1 = X * dblScaleX
-                        .intY1 = Y * dblScaleY
-                        .intZ1 = intHeights(X, Y)
+                        If intBlockSize < 0 Then
+                            intBlockSize = 0
+                        End If
 
-                        .intX2 = (X - 1) * dblScaleX
-                        .intY2 = Y * dblScaleY
-                        .intZ2 = intHeights(X - 1, Y)
+                        For intTemp1 = 0 To intBlockSize
+                            For intTemp2 = 0 To intBlockSize
+                                bitTopDone(X + intTemp1, Y + intTemp2) = True
+                            Next
+                        Next
 
-                        .intX3 = (X - 1) * dblScaleX
-                        .intY3 = (Y - 1) * dblScaleY
-                        .intZ3 = intHeights(X - 1, Y - 1)
-                    End With
-                    WriteTriangle(objTriangle, objFile)
+                        intBlockSize += 1
 
-                    If bitDoBase Then
-                        'Lets do a simple base...
+                        'Below
                         objTriangleC += 1
                         With objTriangle
                             .intX1 = X * dblScaleX
                             .intY1 = Y * dblScaleY
-                            .intZ1 = 0
+                            .intZ1 = intHeights(X, Y)
 
-                            .intX2 = X * dblScaleX
-                            .intY2 = (Y - 1) * dblScaleY
-                            .intZ2 = 0
+                            .intX2 = (X + intBlockSize) * dblScaleX
+                            .intY2 = (Y + intBlockSize) * dblScaleY
+                            .intZ2 = intHeights(X + intBlockSize, Y + intBlockSize)
 
-                            .intX3 = (X - 1) * dblScaleX
-                            .intY3 = (Y - 1) * dblScaleY
-                            .intZ3 = 0
+                            .intX3 = (X) * dblScaleX
+                            .intY3 = (Y + intBlockSize) * dblScaleY
+                            .intZ3 = intHeights(X, Y + intBlockSize)
                         End With
                         WriteTriangle(objTriangle, objFile)
 
+                        'Right
                         objTriangleC += 1
                         With objTriangle
                             .intX1 = X * dblScaleX
                             .intY1 = Y * dblScaleY
-                            .intZ1 = 0
+                            .intZ1 = intHeights(X, Y)
 
-                            .intX2 = (X - 1) * dblScaleX
-                            .intY2 = (Y - 1) * dblScaleY
-                            .intZ2 = 0
+                            .intX2 = (X + intBlockSize) * dblScaleX
+                            .intY2 = Y * dblScaleY
+                            .intZ2 = intHeights(X + intBlockSize, Y)
 
-                            .intX3 = (X - 1) * dblScaleX
-                            .intY3 = Y * dblScaleY
-                            .intZ3 = 0
+                            .intX3 = (X + intBlockSize) * dblScaleX
+                            .intY3 = (Y + intBlockSize) * dblScaleY
+                            .intZ3 = intHeights(X + intBlockSize, Y + intBlockSize)
                         End With
                         WriteTriangle(objTriangle, objFile)
+
                     End If
                 End If
             Next
         Next
 
+        If bitDoBase Then
+            For X = 0 To objImage.Size.Width
+                For Y = 0 To objImage.Size.Height
+                    If Not bitBottomDone(X, Y) Then
+                        'If not bitDoBase, we know we have to map everything, skip the check.
+                        If intHeights(X, Y) > 0 OrElse _
+                            intHeights(X, Y) > 0 OrElse _
+                            intHeights(X + 1, Y) > 0 OrElse _
+                            intHeights(X, Y + 1) > 0 OrElse _
+                            intHeights(X + 1, Y + 1) > 0 Then
 
 
 
 
-        'Lets get to it!
-        'For X = 1 To objTriangleC
-        'WriteTriangle(objTriangles(X), objFile)
-        'Next
 
-        'Catch ex As Exception
-        'MessageBox.Show("Error: " & ex.Message, "Program Error")
-        'End Try
+                            intBlockSize = 0
+                            bitNoMatch = False
+
+                            intTemp1 = intImageWidth - X
+                            intTemp2 = intImageHeight - Y
+                            If intTemp1 > intTemp2 Then
+                                intMatchSize = intTemp1
+                            Else
+                                intMatchSize = intTemp2
+                            End If
+
+
+                            For I = 1 To intMatchSize
+                                For intTemp1 = 0 To I
+                                    'Yes I know we do one extra check per loop.
+                                    If bitBottomDone(X, Y) Then
+                                        bitNoMatch = True
+                                        Exit For
+                                    Else
+                                        If intHeights(X + I, Y + intTemp1) = 0 Then
+                                            bitNoMatch = True
+                                            Exit For
+                                        ElseIf intHeights(X + intTemp1, Y + I) = 0 Then
+                                            bitNoMatch = True
+                                            Exit For
+                                        End If
+                                    End If
+                                Next
+                                If bitNoMatch Then
+                                    Exit For
+                                Else
+                                    intBlockSize = I - 1
+                                End If
+                            Next
+
+                            If intBlockSize < 0 Then
+                                intBlockSize = 0
+                            End If
+
+                            For intTemp1 = 0 To intBlockSize
+                                For intTemp2 = 0 To intBlockSize
+                                    bitBottomDone(X + intTemp1, Y + intTemp2) = True
+                                Next
+                            Next
+
+                            intBlockSize += 1
+
+                            'Below
+                            objTriangleC += 1
+                            With objTriangle
+                                .intX1 = X * dblScaleX
+                                .intY1 = Y * dblScaleY
+                                .intZ1 = 0
+
+                                .intX2 = X * dblScaleX
+                                .intY2 = (Y + intBlockSize) * dblScaleY
+                                .intZ2 = 0
+
+                                .intX3 = (X + intBlockSize) * dblScaleX
+                                .intY3 = (Y + intBlockSize) * dblScaleY
+                                .intZ3 = 0
+                            End With
+                            WriteTriangle(objTriangle, objFile)
+
+                            'Right
+                            objTriangleC += 1
+                            With objTriangle
+                                .intX1 = X * dblScaleX
+                                .intY1 = Y * dblScaleY
+                                .intZ1 = 0
+
+                                .intX2 = (X + intBlockSize) * dblScaleX
+                                .intY2 = (Y + intBlockSize) * dblScaleY
+                                .intZ2 = 0
+
+                                .intX3 = (X + intBlockSize) * dblScaleX
+                                .intY3 = Y * dblScaleY
+                                .intZ3 = 0
+                            End With
+                            WriteTriangle(objTriangle, objFile)
+
+
+
+
+
+
+
+                            ''Lets do a simple base...
+                            'objTriangleC += 1
+                            'With objTriangle
+                            '    .intX1 = X * dblScaleX
+                            '    .intY1 = Y * dblScaleY
+                            '    .intZ1 = 0
+
+                            '    .intX2 = X * dblScaleX
+                            '    .intY2 = (Y - 1) * dblScaleY
+                            '    .intZ2 = 0
+
+                            '    .intX3 = (X - 1) * dblScaleX
+                            '    .intY3 = (Y - 1) * dblScaleY
+                            '    .intZ3 = 0
+                            'End With
+                            'WriteTriangle(objTriangle, objFile)
+
+                            'objTriangleC += 1
+                            'With objTriangle
+                            '    .intX1 = X * dblScaleX
+                            '    .intY1 = Y * dblScaleY
+                            '    .intZ1 = 0
+
+                            '    .intX2 = (X - 1) * dblScaleX
+                            '    .intY2 = (Y - 1) * dblScaleY
+                            '    .intZ2 = 0
+
+                            '    .intX3 = (X - 1) * dblScaleX
+                            '    .intY3 = Y * dblScaleY
+                            '    .intZ3 = 0
+                            'End With
+                            'WriteTriangle(objTriangle, objFile)
+                        End If
+                    End If
+                Next
+            Next
+        End If
+
 
         If bitBinMode Then
             WriteTriangleCount(objTriangleC, objFile)
