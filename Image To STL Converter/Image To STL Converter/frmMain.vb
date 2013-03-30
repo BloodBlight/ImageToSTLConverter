@@ -25,6 +25,11 @@
     Dim bitBinMode As Boolean = True
     Dim bitUpdateingSize As Boolean = False
 
+
+    Dim sngImageXData(,) As Single
+    Dim sngImageYData(,) As Single
+    Dim sngImageZData(,) As Single
+
     Dim intErrorCount As UInt16 = 0
 
     Private Sub picSource_Click(sender As Object, e As EventArgs) Handles picSource.Click
@@ -52,15 +57,19 @@
             picSource.Load(strFileName)
         End If
 
+        Dim intMaxSize As Integer = Val(txtX.Text)
+        If intMaxSize = 0 Then intMaxSize = 100
+
+
         Dim X As Integer = picSource.Image.Width
         Dim Y As Integer = picSource.Image.Height
         bitUpdateingSize = True
         If X > Y Then
-            txtX.Text = 200
-            txtY.Text = Y / X * 200
+            txtX.Text = intMaxSize
+            txtY.Text = Y / X * intMaxSize
         Else
-            txtY.Text = 200
-            txtX.Text = X / Y * 200
+            txtY.Text = intMaxSize
+            txtX.Text = X / Y * intMaxSize
         End If
         bitUpdateingSize = False
         bitUpdateNeeded = True
@@ -184,9 +193,6 @@
                     objTopColor = Color.White
                 End If
 
-                'Dim sngImageXData(intImageWidth, intImageHeight) As Single
-                'Dim sngImageYData(intImageWidth, intImageHeight) As Single
-                'Dim sngImageZData(intImageWidth, intImageHeight) As Single
 
 
                 'If Val(txtBase.Text) > 0 Then
@@ -200,8 +206,13 @@
                 'objSource = picSource.Image
                 picDest.Image = objTarget
 
-                For X = 1 To picSource.Image.Size.Width
-                    For Y = 1 To picSource.Image.Size.Height
+
+                'ReDim sngImageXData(intImageWidth, intImageHeight)
+                'ReDim sngImageYData(intImageWidth, intImageHeight)
+                'ReDim sngImageZData(intImageWidth, intImageHeight)
+
+                For X = 1 To intImageWidth
+                    For Y = 1 To intImageHeight
                         objColor = objTarget.GetPixel(X - 1, Y - 1)
 
                         'Compute gray
@@ -249,13 +260,13 @@
 
                         bitSpikeFound = False
 
-                        For X = 1 To picSource.Image.Size.Width - 2
-                            For Y = 1 To picSource.Image.Size.Height - 2
+                        For X = 1 To intImageWidth - 2
+                            For Y = 1 To intImageHeight - 2
 
                                 If CheckForSpikeAt(X, Y, objTarget, intMinFriends, intSpikesFound) Then
                                     bitSpikeFound = True
-                                    If X > 1 And X < picSource.Image.Size.Width - 2 Then
-                                        If Y > 1 And Y < picSource.Image.Size.Height - 2 Then
+                                    If X > 1 And X < intImageWidth - 2 Then
+                                        If Y > 1 And Y < intImageHeight - 2 Then
                                             CheckForSpikeAt(X - 1, Y - 1, objTarget, intMinFriends, intSpikesFound)
                                             CheckForSpikeAt(X, Y - 1, objTarget, intMinFriends, intSpikesFound)
                                             CheckForSpikeAt(X + 1, Y - 1, objTarget, intMinFriends, intSpikesFound)
@@ -297,13 +308,13 @@
 
                         bitSpikeFound = False
 
-                        For X = 1 To picSource.Image.Size.Width - 2
-                            For Y = 1 To picSource.Image.Size.Height - 2
+                        For X = 1 To intImageWidth - 2
+                            For Y = 1 To intImageHeight - 2
 
                                 If CheckForSpikeAt(X, Y, objTarget, intMinFriends, intSpikesFound, True) Then
                                     bitSpikeFound = True
-                                    If X > 1 And X < picSource.Image.Size.Width - 2 Then
-                                        If Y > 1 And Y < picSource.Image.Size.Height - 2 Then
+                                    If X > 1 And X < intImageWidth - 2 Then
+                                        If Y > 1 And Y < intImageHeight - 2 Then
                                             CheckForSpikeAt(X - 1, Y - 1, objTarget, intMinFriends, intSpikesFound, True)
                                             CheckForSpikeAt(X, Y - 1, objTarget, intMinFriends, intSpikesFound, True)
                                             CheckForSpikeAt(X + 1, Y - 1, objTarget, intMinFriends, intSpikesFound, True)
@@ -1090,6 +1101,10 @@
                 .SelectionStart = .Text.Length
             End If
         End With
+        bitUpdateNeeded = True
+    End Sub
+
+    Private Sub tbAntiSpike_Scroll(sender As Object, e As EventArgs) Handles tbAntiSpike.Scroll
         bitUpdateNeeded = True
     End Sub
 End Class
