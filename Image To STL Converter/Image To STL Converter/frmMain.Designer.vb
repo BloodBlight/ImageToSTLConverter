@@ -100,7 +100,7 @@ Partial Class frmMain
         'tmrUpdate
         '
         Me.tmrUpdate.Enabled = True
-        Me.tmrUpdate.Interval = 200
+        Me.tmrUpdate.Interval = 300
         '
         'txtX
         '
