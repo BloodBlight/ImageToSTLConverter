@@ -29,6 +29,10 @@
     Dim sngImageXData(,) As Single
     Dim sngImageYData(,) As Single
     Dim sngImageZData(,) As Single
+    Dim intMinZ As UInt32
+
+    Dim bitCancelExport As Boolean = False
+
 
     Dim intErrorCount As UInt16 = 0
 
@@ -99,8 +103,15 @@
             .AddExtension = True
             .DefaultExt = "stl"
             If .ShowDialog() = Windows.Forms.DialogResult.OK Then
+                cmdCancel.Enabled = True
+                bitCancelExport = False
                 CreateSTLFile(.FileName)
-                MessageBox.Show("Done!", "STL File Export", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                cmdCancel.Enabled = False
+                If bitCancelExport Then
+                    MessageBox.Show("The export was canceled!  The file will NOT be complete!", "STL File Export", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                Else
+                    MessageBox.Show("Done!", "STL File Export", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                End If
             End If
         End With
         SetFormMode(True)
@@ -138,8 +149,7 @@
                 cmdCreate.Enabled = False
                 picDest.BackColor = Color.White
 
-
-                Application.DoEvents()
+                SetStatus("Building basic image data...")
 
                 Dim X As Integer
                 Dim Y As Integer
@@ -162,7 +172,7 @@
                 'Dim objPic As System.Drawing.Image
                 'Dim objSource As System.Drawing.Bitmap = picSource.Image
 
-                Dim objTarget As System.Drawing.Bitmap = picSource.Image
+                Dim objTarget As New System.Drawing.Bitmap(picSource.Image)
 
                 'We don't want to scale UP a side if we don't need to, the math will correct it later.
                 Dim sngRes = Val(txtRes.Text)
@@ -206,11 +216,6 @@
                 'objSource = picSource.Image
                 picDest.Image = objTarget
 
-
-                'ReDim sngImageXData(intImageWidth, intImageHeight)
-                'ReDim sngImageYData(intImageWidth, intImageHeight)
-                'ReDim sngImageZData(intImageWidth, intImageHeight)
-
                 For X = 1 To intImageWidth
                     For Y = 1 To intImageHeight
                         objColor = objTarget.GetPixel(X - 1, Y - 1)
@@ -248,6 +253,18 @@
 
                 Dim intLoops As UInt16 = 0
                 Dim intSpikesFound As UInt32 = 0
+                Dim intMaxLoops As Int16 = 0
+
+
+                If chkSpike.Checked Then
+                    intMaxLoops += 10
+                End If
+
+                If chkAntiSpike.Checked Then
+                    intMaxLoops += 10
+                End If
+
+                SetStatus("Searching for spikes...")
 
                 If chkSpike.Checked Then
                     Dim bitSpikeFound As Boolean
@@ -286,11 +303,15 @@
                             End If
 
                             Me.Text = "Image To STL Converter - Found " & intSpikesFound & " spikes in " & intLoops & " loops..."
+
+                            barStatus.Value = (intLoops / intMaxLoops + 1 / intMaxLoops * X / (intImageWidth - 2)) * 1000
+
                             Application.DoEvents()
 
                         Next
                         intLoops += 1
-                    Loop While bitSpikeFound And intLoops < 10
+                        barStatus.Value = intLoops / intMaxLoops * 1000
+                    Loop While bitSpikeFound And intLoops < intMaxLoops
                 End If
 
 
@@ -334,14 +355,23 @@
                             End If
 
                             Me.Text = "Image To STL Converter - Found " & intSpikesFound & " spikes in " & intLoops & " loops..."
+
+                            barStatus.Value = (intLoops / intMaxLoops + 1 / intMaxLoops * X / (intImageWidth - 2)) * 1000
+
                             Application.DoEvents()
 
                         Next
                         intLoops += 1
-                    Loop While bitSpikeFound And intLoops < 20
+                        barStatus.Value = intLoops / intMaxLoops * 1000
+                    Loop While bitSpikeFound And intLoops < intMaxLoops
                 End If
 
                 picDest.Image = objTarget
+
+                BuildVectorData()
+
+                SetStatus("Done!")
+                barStatus.Value = 0
             Catch ex As Exception
                 intErrorCount += 1
                 If intErrorCount > 3 Then
@@ -363,6 +393,7 @@
             cmdCreate.Enabled = True
             picDest.BackColor = Color.Black
             'lblSpike.Visible = True
+
         End If
     End Sub
 
@@ -510,6 +541,45 @@
         End With
     End Sub
 
+    Sub BuildVectorData()
+
+        SetStatus("Building vector data...")
+
+
+        Dim intImageWidth As Integer = picDest.Image.Width
+        Dim intImageHeight As Integer = picDest.Image.Height
+        ReDim sngImageXData(intImageWidth + 1, intImageHeight + 1)
+        ReDim sngImageYData(intImageWidth + 1, intImageHeight + 1)
+        ReDim sngImageZData(intImageWidth + 1, intImageHeight + 1)
+
+        Dim dblImageBase As Double = Val(txtBase.Text)
+
+        Dim dblScaleX As Double = CDbl(txtX.Text) / CDbl(intImageWidth)
+        Dim dblScaleY As Double = CDbl(txtY.Text) / CDbl(intImageHeight)
+        Dim dblScaleZ As Double = CDbl(txtZ.Text) / 255
+
+        'Dim intHeights(objImage.Size.Width + 2, objImage.Size.Height + 2) As Single
+        Dim intTotalHeight As UInt16 = Val(txtZ.Text) + Val(txtBase.Text)
+
+        intMinZ = 10000
+
+        Dim objImage As Bitmap = picDest.Image
+        Dim bitDoBase As Boolean = True
+        Dim sngValue As Single
+
+        For X = 0 To intImageWidth - 1
+            For Y = 0 To intImageHeight - 1
+                sngValue = dblImageBase + (255 - CDbl(objImage.GetPixel(X, Y).R)) * dblScaleZ
+                sngImageZData(X + 1, (intImageHeight) - Y) = sngValue
+                If sngValue < intMinZ Then
+                    intMinZ = sngValue
+                End If
+            Next
+            barStatus.Value = X / intImageWidth * 1000
+            Application.DoEvents()
+        Next
+    End Sub
+
     Sub CreateSTLFile(ByRef strFile As String)
         'Binary STL File format:
         '***************************************
@@ -524,6 +594,8 @@
         'UINT16 – Attribute byte count
         'End
         '***************************************
+        SetStatus("Exporting STL File...")
+
         Dim bitInverted As Boolean = False
 
         Dim strHeader As String
@@ -671,7 +743,7 @@
                             intMatchSize = intTemp2
                         End If
 
-                        
+
                         For I = 1 To intMatchSize
                             For intTemp1 = 0 To I
                                 'Yes I know we do one ex6tra check per loop.
@@ -744,9 +816,18 @@
                     End If
                 End If
             Next
+            If bitDoBase Then
+                barStatus.Value = X / intImageWidth * 500
+            Else
+                barStatus.Value = X / intImageWidth * 1000
+            End If
+            Application.DoEvents()
+            If bitCancelExport Then
+                Exit For
+            End If
         Next
 
-        If bitDoBase Then
+        If bitDoBase And Not bitCancelExport Then
             For X = 0 To objImage.Size.Width
                 For Y = 0 To objImage.Size.Height
                     If Not bitBottomDone(X, Y) Then
@@ -841,48 +922,14 @@
                                 .intZ3 = 0
                             End With
                             WriteTriangle(objTriangle, objFile)
-
-
-
-
-
-
-
-                            ''Lets do a simple base...
-                            'objTriangleC += 1
-                            'With objTriangle
-                            '    .intX1 = X * dblScaleX
-                            '    .intY1 = Y * dblScaleY
-                            '    .intZ1 = 0
-
-                            '    .intX2 = X * dblScaleX
-                            '    .intY2 = (Y - 1) * dblScaleY
-                            '    .intZ2 = 0
-
-                            '    .intX3 = (X - 1) * dblScaleX
-                            '    .intY3 = (Y - 1) * dblScaleY
-                            '    .intZ3 = 0
-                            'End With
-                            'WriteTriangle(objTriangle, objFile)
-
-                            'objTriangleC += 1
-                            'With objTriangle
-                            '    .intX1 = X * dblScaleX
-                            '    .intY1 = Y * dblScaleY
-                            '    .intZ1 = 0
-
-                            '    .intX2 = (X - 1) * dblScaleX
-                            '    .intY2 = (Y - 1) * dblScaleY
-                            '    .intZ2 = 0
-
-                            '    .intX3 = (X - 1) * dblScaleX
-                            '    .intY3 = Y * dblScaleY
-                            '    .intZ3 = 0
-                            'End With
-                            'WriteTriangle(objTriangle, objFile)
                         End If
                     End If
                 Next
+                barStatus.Value = 500 + X / intImageWidth * 500
+                Application.DoEvents()
+                If bitCancelExport Then
+                    Exit For
+                End If
             Next
         End If
 
@@ -898,6 +945,9 @@
         Catch ex As Exception
 
         End Try
+
+        barStatus.Value = 0
+        SetStatus("Done!")
     End Sub
 
     Sub WriteTriangle(ByRef objTriangle As Triangle, ByRef objFile As IO.FileStream)
@@ -1057,6 +1107,7 @@
         txtX.Enabled = bitMode
         txtY.Enabled = bitMode
         txtZ.Enabled = bitMode
+        txtRes.Enabled = bitMode
         chkBW.Enabled = bitMode
         chkSpike.Enabled = bitMode
         chkAntiSpike.Enabled = bitMode
@@ -1107,7 +1158,18 @@
     Private Sub tbAntiSpike_Scroll(sender As Object, e As EventArgs) Handles tbAntiSpike.Scroll
         bitUpdateNeeded = True
     End Sub
+
+    Sub SetStatus(ByRef strStatus As String)
+        lblStatus.Text = "Status:  " & strStatus
+        Application.DoEvents()
+    End Sub
+
+    Private Sub cmdCancel_Click(sender As Object, e As EventArgs) Handles cmdCancel.Click
+        cmdCancel.Enabled = False
+        bitCancelExport = True
+    End Sub
 End Class
+
 
 
 

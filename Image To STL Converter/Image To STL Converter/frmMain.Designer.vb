@@ -47,6 +47,9 @@ Partial Class frmMain
         Me.chkAntiSpike = New System.Windows.Forms.CheckBox()
         Me.txtRes = New System.Windows.Forms.TextBox()
         Me.Label3 = New System.Windows.Forms.Label()
+        Me.barStatus = New System.Windows.Forms.ProgressBar()
+        Me.lblStatus = New System.Windows.Forms.Label()
+        Me.cmdCancel = New System.Windows.Forms.Button()
         CType(Me.picSource, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.picDest, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbBWTH, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -277,12 +280,44 @@ Partial Class frmMain
         Me.Label3.TabIndex = 29
         Me.Label3.Text = "Max Res (MM):"
         '
+        'barStatus
+        '
+        Me.barStatus.Location = New System.Drawing.Point(504, 579)
+        Me.barStatus.Maximum = 1000
+        Me.barStatus.Name = "barStatus"
+        Me.barStatus.Size = New System.Drawing.Size(486, 23)
+        Me.barStatus.Step = 5
+        Me.barStatus.TabIndex = 31
+        '
+        'lblStatus
+        '
+        Me.lblStatus.AutoSize = True
+        Me.lblStatus.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblStatus.Location = New System.Drawing.Point(8, 579)
+        Me.lblStatus.Name = "lblStatus"
+        Me.lblStatus.Size = New System.Drawing.Size(123, 20)
+        Me.lblStatus.TabIndex = 32
+        Me.lblStatus.Text = "Status: Booting."
+        '
+        'cmdCancel
+        '
+        Me.cmdCancel.Enabled = False
+        Me.cmdCancel.Location = New System.Drawing.Point(996, 579)
+        Me.cmdCancel.Name = "cmdCancel"
+        Me.cmdCancel.Size = New System.Drawing.Size(158, 23)
+        Me.cmdCancel.TabIndex = 33
+        Me.cmdCancel.Text = "Cancel Export"
+        Me.cmdCancel.UseVisualStyleBackColor = True
+        '
         'frmMain
         '
         Me.AllowDrop = True
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1160, 580)
+        Me.ClientSize = New System.Drawing.Size(1160, 610)
+        Me.Controls.Add(Me.cmdCancel)
+        Me.Controls.Add(Me.lblStatus)
+        Me.Controls.Add(Me.barStatus)
         Me.Controls.Add(Me.txtRes)
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.tbAntiSpike)
@@ -305,7 +340,12 @@ Partial Class frmMain
         Me.Controls.Add(Me.cmdCreate)
         Me.Controls.Add(Me.picDest)
         Me.Controls.Add(Me.picSource)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
+        Me.MaximizeBox = False
+        Me.MaximumSize = New System.Drawing.Size(1176, 648)
+        Me.MinimumSize = New System.Drawing.Size(1176, 648)
         Me.Name = "frmMain"
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = " Image To STL Converter"
         CType(Me.picSource, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.picDest, System.ComponentModel.ISupportInitialize).EndInit()
@@ -339,5 +379,8 @@ Partial Class frmMain
     Friend WithEvents chkAntiSpike As System.Windows.Forms.CheckBox
     Friend WithEvents txtRes As System.Windows.Forms.TextBox
     Friend WithEvents Label3 As System.Windows.Forms.Label
+    Friend WithEvents barStatus As System.Windows.Forms.ProgressBar
+    Friend WithEvents lblStatus As System.Windows.Forms.Label
+    Friend WithEvents cmdCancel As System.Windows.Forms.Button
 
 End Class
