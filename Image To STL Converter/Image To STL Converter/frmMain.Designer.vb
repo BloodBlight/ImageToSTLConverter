@@ -45,6 +45,8 @@ Partial Class frmMain
         Me.tbSpike = New System.Windows.Forms.TrackBar()
         Me.tbAntiSpike = New System.Windows.Forms.TrackBar()
         Me.chkAntiSpike = New System.Windows.Forms.CheckBox()
+        Me.txtRes = New System.Windows.Forms.TextBox()
+        Me.Label3 = New System.Windows.Forms.Label()
         CType(Me.picSource, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.picDest, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbBWTH, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -257,12 +259,32 @@ Partial Class frmMain
         Me.chkAntiSpike.Text = "Anti-Spike" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Filter"
         Me.chkAntiSpike.UseVisualStyleBackColor = True
         '
+        'txtRes
+        '
+        Me.txtRes.Location = New System.Drawing.Point(1003, 240)
+        Me.txtRes.Name = "txtRes"
+        Me.txtRes.Size = New System.Drawing.Size(76, 20)
+        Me.txtRes.TabIndex = 30
+        Me.txtRes.Text = "0.1"
+        Me.txtRes.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Location = New System.Drawing.Point(1000, 224)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(79, 13)
+        Me.Label3.TabIndex = 29
+        Me.Label3.Text = "Max Res (MM):"
+        '
         'frmMain
         '
         Me.AllowDrop = True
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1160, 580)
+        Me.Controls.Add(Me.txtRes)
+        Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.tbAntiSpike)
         Me.Controls.Add(Me.chkAntiSpike)
         Me.Controls.Add(Me.tbSpike)
@@ -315,5 +337,7 @@ Partial Class frmMain
     Friend WithEvents tbSpike As System.Windows.Forms.TrackBar
     Friend WithEvents tbAntiSpike As System.Windows.Forms.TrackBar
     Friend WithEvents chkAntiSpike As System.Windows.Forms.CheckBox
+    Friend WithEvents txtRes As System.Windows.Forms.TextBox
+    Friend WithEvents Label3 As System.Windows.Forms.Label
 
 End Class

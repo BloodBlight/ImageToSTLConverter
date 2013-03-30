@@ -15,6 +15,7 @@
         'Dim intABC As UInt16
     End Structure
 
+    
 
     Const conEmptySingle As Single = 0
     Const conEmptyUInt16 As UInt16 = 0
@@ -102,6 +103,10 @@
         bitUpdateNeeded = True
     End Sub
 
+    Public Function ThumbnailCallback() As Boolean
+        Return False
+    End Function
+
     Private Sub tmrUpdate_Tick(sender As Object, e As EventArgs) Handles tmrUpdate.Tick
         If bitWorking Then
             If picDest.BackColor = Color.White Then
@@ -117,6 +122,7 @@
             End If
         ElseIf bitUpdateNeeded Then
             Try
+                Dim myCallback As New Image.GetThumbnailImageAbort(AddressOf ThumbnailCallback)
 
                 bitUpdateNeeded = False
                 bitWorking = True
@@ -141,9 +147,28 @@
                 Dim bitDoAlpha As Boolean = chkAlpha.Checked
                 Dim bitInvert As Boolean = chkInvert.Checked
 
+                Dim sngTargetWidth As Single = Val(txtX.Text)
+                Dim sngTargetHeight As Single = Val(txtY.Text)
+
                 'Dim objPic As System.Drawing.Image
-                Dim objSource As New System.Drawing.Bitmap(intImageWidth, intImageHeight)
-                Dim objTarget As New System.Drawing.Bitmap(picSource.Image.Size.Width, picSource.Image.Size.Height)
+                'Dim objSource As System.Drawing.Bitmap = picSource.Image
+
+                Dim objTarget As System.Drawing.Bitmap = picSource.Image
+
+                'We don't want to scale UP a side if we don't need to, the math will correct it later.
+                Dim sngRes = Val(txtRes.Text)
+                If sngTargetWidth / sngRes < intImageWidth And sngTargetHeight / sngRes < intImageHeight Then
+                    intImageWidth = sngTargetWidth / sngRes
+                    intImageHeight = sngTargetHeight / sngRes
+                    objTarget = objTarget.GetThumbnailImage(intImageWidth, intImageHeight, myCallback, IntPtr.Zero)
+                ElseIf sngTargetWidth / sngRes < intImageWidth Then
+                    intImageWidth = sngTargetWidth / sngRes
+                    objTarget = objTarget.GetThumbnailImage(intImageWidth, intImageHeight, myCallback, IntPtr.Zero)
+                ElseIf sngTargetHeight / sngRes < intImageHeight Then
+                    intImageHeight = sngTargetHeight / sngRes
+                    objTarget = objTarget.GetThumbnailImage(intImageWidth, intImageHeight, myCallback, IntPtr.Zero)
+                End If
+
                 Dim objColor As System.Drawing.Color
                 Dim intNewGray As UInt16
                 Dim intThresh As Integer = tbBWTH.Value
@@ -159,6 +184,11 @@
                     objTopColor = Color.White
                 End If
 
+                'Dim sngImageXData(intImageWidth, intImageHeight) As Single
+                'Dim sngImageYData(intImageWidth, intImageHeight) As Single
+                'Dim sngImageZData(intImageWidth, intImageHeight) As Single
+
+
                 'If Val(txtBase.Text) > 0 Then
                 'Dim intGray As Integer = 255 - (Val(txtBase.Text) / (Val(txtZ.Text) + Val(txtBase.Text)) * 255)
                 'objBaseColor = System.Drawing.Color.FromArgb(intBaseZC, intBaseZC, intBaseZC)
@@ -167,12 +197,12 @@
                 'End If
 
 
-                objSource = picSource.Image
+                'objSource = picSource.Image
                 picDest.Image = objTarget
 
                 For X = 1 To picSource.Image.Size.Width
                     For Y = 1 To picSource.Image.Size.Height
-                        objColor = objSource.GetPixel(X - 1, Y - 1)
+                        objColor = objTarget.GetPixel(X - 1, Y - 1)
 
                         'Compute gray
                         intNewGray = (Int(objColor.R) + Int(objColor.B) + Int(objColor.G)) / 3
@@ -441,6 +471,7 @@
                 End If
             End With
         End If
+        bitUpdateNeeded = True
     End Sub
 
     Private Sub txtY_TextChanged(sender As Object, e As EventArgs) Handles txtY.TextChanged
@@ -457,6 +488,7 @@
                 End If
             End With
         End If
+        bitUpdateNeeded = True
     End Sub
 
     Private Sub txtZ_TextChanged(sender As Object, e As EventArgs) Handles txtZ.TextChanged
@@ -1050,6 +1082,15 @@
         If Not chkAntiSpike.Checked Then
             Me.Text = "Image To STL Converter"
         End If
+    End Sub
+
+    Private Sub txtRes_TextChanged(sender As Object, e As EventArgs) Handles txtRes.TextChanged
+        With txtRes
+            If SafeNumber(.Text) Then
+                .SelectionStart = .Text.Length
+            End If
+        End With
+        bitUpdateNeeded = True
     End Sub
 End Class
 
