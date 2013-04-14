@@ -242,6 +242,7 @@
                             End If
                         End If
                     Next
+                    barStatus.Value = X / intImageWidth * 1000
                     Application.DoEvents()
                     If bitUpdateNeeded Then
                         bitWorking = False
@@ -613,7 +614,8 @@
 
         'Try
         strHeader = Space(80)
-        Mid(strHeader, 1, 8) = "STL File"
+        Mid(strHeader, 1, 8) = "STL File - Created With: Image to STL Converter (http://goo.gl/wWFMx)"
+
 
         Try
             FileSystem.Kill(strFile)

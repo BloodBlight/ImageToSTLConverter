@@ -268,7 +268,7 @@ Partial Class frmMain
         Me.txtRes.Name = "txtRes"
         Me.txtRes.Size = New System.Drawing.Size(76, 20)
         Me.txtRes.TabIndex = 30
-        Me.txtRes.Text = "0.1"
+        Me.txtRes.Text = "0.25"
         Me.txtRes.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'Label3
