@@ -64,7 +64,7 @@ Partial Class frmMain
         Me.picSource.InitialImage = Nothing
         Me.picSource.Location = New System.Drawing.Point(12, 12)
         Me.picSource.Name = "picSource"
-        Me.picSource.Size = New System.Drawing.Size(486, 560)
+        Me.picSource.Size = New System.Drawing.Size(390, 560)
         Me.picSource.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
         Me.picSource.TabIndex = 0
         Me.picSource.TabStop = False
@@ -73,16 +73,16 @@ Partial Class frmMain
         '
         Me.picDest.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.picDest.InitialImage = Nothing
-        Me.picDest.Location = New System.Drawing.Point(504, 12)
+        Me.picDest.Location = New System.Drawing.Point(418, 12)
         Me.picDest.Name = "picDest"
-        Me.picDest.Size = New System.Drawing.Size(486, 560)
+        Me.picDest.Size = New System.Drawing.Size(390, 561)
         Me.picDest.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
         Me.picDest.TabIndex = 2
         Me.picDest.TabStop = False
         '
         'cmdCreate
         '
-        Me.cmdCreate.Location = New System.Drawing.Point(996, 549)
+        Me.cmdCreate.Location = New System.Drawing.Point(814, 549)
         Me.cmdCreate.Name = "cmdCreate"
         Me.cmdCreate.Size = New System.Drawing.Size(158, 23)
         Me.cmdCreate.TabIndex = 3
@@ -91,7 +91,7 @@ Partial Class frmMain
         '
         'tbBWTH
         '
-        Me.tbBWTH.Location = New System.Drawing.Point(1003, 498)
+        Me.tbBWTH.Location = New System.Drawing.Point(821, 498)
         Me.tbBWTH.Maximum = 254
         Me.tbBWTH.Name = "tbBWTH"
         Me.tbBWTH.Size = New System.Drawing.Size(155, 45)
@@ -104,7 +104,7 @@ Partial Class frmMain
         '
         'txtX
         '
-        Me.txtX.Location = New System.Drawing.Point(999, 75)
+        Me.txtX.Location = New System.Drawing.Point(817, 75)
         Me.txtX.Name = "txtX"
         Me.txtX.Size = New System.Drawing.Size(76, 20)
         Me.txtX.TabIndex = 6
@@ -112,7 +112,7 @@ Partial Class frmMain
         '
         'txtY
         '
-        Me.txtY.Location = New System.Drawing.Point(1078, 75)
+        Me.txtY.Location = New System.Drawing.Point(896, 75)
         Me.txtY.Name = "txtY"
         Me.txtY.Size = New System.Drawing.Size(76, 20)
         Me.txtY.TabIndex = 7
@@ -121,7 +121,7 @@ Partial Class frmMain
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(996, 59)
+        Me.Label1.Location = New System.Drawing.Point(814, 59)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(130, 13)
         Me.Label1.TabIndex = 9
@@ -130,7 +130,7 @@ Partial Class frmMain
         'Label2
         '
         Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(1000, 176)
+        Me.Label2.Location = New System.Drawing.Point(818, 176)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(83, 13)
         Me.Label2.TabIndex = 10
@@ -138,7 +138,7 @@ Partial Class frmMain
         '
         'txtBase
         '
-        Me.txtBase.Location = New System.Drawing.Point(1003, 192)
+        Me.txtBase.Location = New System.Drawing.Point(821, 192)
         Me.txtBase.Name = "txtBase"
         Me.txtBase.Size = New System.Drawing.Size(76, 20)
         Me.txtBase.TabIndex = 13
@@ -147,7 +147,7 @@ Partial Class frmMain
         '
         'txtZ
         '
-        Me.txtZ.Location = New System.Drawing.Point(1003, 143)
+        Me.txtZ.Location = New System.Drawing.Point(821, 143)
         Me.txtZ.Name = "txtZ"
         Me.txtZ.Size = New System.Drawing.Size(76, 20)
         Me.txtZ.TabIndex = 16
@@ -157,7 +157,7 @@ Partial Class frmMain
         'Label4
         '
         Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(1000, 127)
+        Me.Label4.Location = New System.Drawing.Point(818, 127)
         Me.Label4.Name = "Label4"
         Me.Label4.Size = New System.Drawing.Size(102, 13)
         Me.Label4.TabIndex = 15
@@ -168,7 +168,7 @@ Partial Class frmMain
         Me.chkLocked.AutoSize = True
         Me.chkLocked.Checked = True
         Me.chkLocked.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkLocked.Location = New System.Drawing.Point(999, 101)
+        Me.chkLocked.Location = New System.Drawing.Point(817, 101)
         Me.chkLocked.Name = "chkLocked"
         Me.chkLocked.Size = New System.Drawing.Size(90, 17)
         Me.chkLocked.TabIndex = 19
@@ -180,7 +180,7 @@ Partial Class frmMain
         Me.chkSpike.AutoSize = True
         Me.chkSpike.Checked = True
         Me.chkSpike.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkSpike.Location = New System.Drawing.Point(999, 278)
+        Me.chkSpike.Location = New System.Drawing.Point(817, 278)
         Me.chkSpike.Name = "chkSpike"
         Me.chkSpike.Size = New System.Drawing.Size(53, 30)
         Me.chkSpike.TabIndex = 20
@@ -190,7 +190,7 @@ Partial Class frmMain
         'chkBW
         '
         Me.chkBW.AutoSize = True
-        Me.chkBW.Location = New System.Drawing.Point(999, 475)
+        Me.chkBW.Location = New System.Drawing.Point(817, 475)
         Me.chkBW.Name = "chkBW"
         Me.chkBW.Size = New System.Drawing.Size(138, 17)
         Me.chkBW.TabIndex = 21
@@ -199,7 +199,7 @@ Partial Class frmMain
         '
         'cmdOpen
         '
-        Me.cmdOpen.Location = New System.Drawing.Point(996, 12)
+        Me.cmdOpen.Location = New System.Drawing.Point(814, 12)
         Me.cmdOpen.Name = "cmdOpen"
         Me.cmdOpen.Size = New System.Drawing.Size(158, 23)
         Me.cmdOpen.TabIndex = 22
@@ -211,7 +211,7 @@ Partial Class frmMain
         Me.chkAlpha.AutoSize = True
         Me.chkAlpha.Checked = True
         Me.chkAlpha.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkAlpha.Location = New System.Drawing.Point(999, 408)
+        Me.chkAlpha.Location = New System.Drawing.Point(817, 408)
         Me.chkAlpha.Name = "chkAlpha"
         Me.chkAlpha.Size = New System.Drawing.Size(140, 17)
         Me.chkAlpha.TabIndex = 24
@@ -221,7 +221,7 @@ Partial Class frmMain
         'chkInvert
         '
         Me.chkInvert.AutoSize = True
-        Me.chkInvert.Location = New System.Drawing.Point(999, 440)
+        Me.chkInvert.Location = New System.Drawing.Point(817, 440)
         Me.chkInvert.Name = "chkInvert"
         Me.chkInvert.Size = New System.Drawing.Size(88, 17)
         Me.chkInvert.TabIndex = 25
@@ -231,7 +231,7 @@ Partial Class frmMain
         'tbSpike
         '
         Me.tbSpike.LargeChange = 1
-        Me.tbSpike.Location = New System.Drawing.Point(1078, 278)
+        Me.tbSpike.Location = New System.Drawing.Point(896, 278)
         Me.tbSpike.Maximum = 6
         Me.tbSpike.Minimum = 2
         Me.tbSpike.Name = "tbSpike"
@@ -242,7 +242,7 @@ Partial Class frmMain
         'tbAntiSpike
         '
         Me.tbAntiSpike.LargeChange = 1
-        Me.tbAntiSpike.Location = New System.Drawing.Point(1078, 312)
+        Me.tbAntiSpike.Location = New System.Drawing.Point(896, 312)
         Me.tbAntiSpike.Maximum = 6
         Me.tbAntiSpike.Minimum = 2
         Me.tbAntiSpike.Name = "tbAntiSpike"
@@ -255,7 +255,7 @@ Partial Class frmMain
         Me.chkAntiSpike.AutoSize = True
         Me.chkAntiSpike.Checked = True
         Me.chkAntiSpike.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkAntiSpike.Location = New System.Drawing.Point(999, 312)
+        Me.chkAntiSpike.Location = New System.Drawing.Point(817, 312)
         Me.chkAntiSpike.Name = "chkAntiSpike"
         Me.chkAntiSpike.Size = New System.Drawing.Size(74, 30)
         Me.chkAntiSpike.TabIndex = 27
@@ -264,7 +264,7 @@ Partial Class frmMain
         '
         'txtRes
         '
-        Me.txtRes.Location = New System.Drawing.Point(1003, 240)
+        Me.txtRes.Location = New System.Drawing.Point(821, 240)
         Me.txtRes.Name = "txtRes"
         Me.txtRes.Size = New System.Drawing.Size(76, 20)
         Me.txtRes.TabIndex = 30
@@ -274,7 +274,7 @@ Partial Class frmMain
         'Label3
         '
         Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(1000, 224)
+        Me.Label3.Location = New System.Drawing.Point(818, 224)
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(79, 13)
         Me.Label3.TabIndex = 29
@@ -282,10 +282,10 @@ Partial Class frmMain
         '
         'barStatus
         '
-        Me.barStatus.Location = New System.Drawing.Point(504, 579)
+        Me.barStatus.Location = New System.Drawing.Point(12, 579)
         Me.barStatus.Maximum = 1000
         Me.barStatus.Name = "barStatus"
-        Me.barStatus.Size = New System.Drawing.Size(486, 23)
+        Me.barStatus.Size = New System.Drawing.Size(796, 23)
         Me.barStatus.Step = 5
         Me.barStatus.TabIndex = 31
         '
@@ -293,7 +293,7 @@ Partial Class frmMain
         '
         Me.lblStatus.AutoSize = True
         Me.lblStatus.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblStatus.Location = New System.Drawing.Point(8, 579)
+        Me.lblStatus.Location = New System.Drawing.Point(12, 614)
         Me.lblStatus.Name = "lblStatus"
         Me.lblStatus.Size = New System.Drawing.Size(123, 20)
         Me.lblStatus.TabIndex = 32
@@ -302,7 +302,7 @@ Partial Class frmMain
         'cmdCancel
         '
         Me.cmdCancel.Enabled = False
-        Me.cmdCancel.Location = New System.Drawing.Point(996, 579)
+        Me.cmdCancel.Location = New System.Drawing.Point(814, 579)
         Me.cmdCancel.Name = "cmdCancel"
         Me.cmdCancel.Size = New System.Drawing.Size(158, 23)
         Me.cmdCancel.TabIndex = 33
@@ -314,7 +314,7 @@ Partial Class frmMain
         Me.AllowDrop = True
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1160, 610)
+        Me.ClientSize = New System.Drawing.Size(984, 647)
         Me.Controls.Add(Me.cmdCancel)
         Me.Controls.Add(Me.lblStatus)
         Me.Controls.Add(Me.barStatus)
@@ -342,8 +342,7 @@ Partial Class frmMain
         Me.Controls.Add(Me.picSource)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.MaximizeBox = False
-        Me.MaximumSize = New System.Drawing.Size(1176, 648)
-        Me.MinimumSize = New System.Drawing.Size(1176, 648)
+        Me.MinimumSize = New System.Drawing.Size(1000, 685)
         Me.Name = "frmMain"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = " Image To STL Converter"

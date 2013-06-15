@@ -1170,6 +1170,39 @@
         cmdCancel.Enabled = False
         bitCancelExport = True
     End Sub
+
+    Private Sub ResizeForm()
+
+        'cmdOpen.Left
+        'Label1.Left
+        'txtX.Left
+        'txtY.Left
+        'chkLocked.Left
+        'Label4.Left
+        'txtZ.Left
+        'Label2.Left
+        'txtBase.Left
+        'Label3.Left
+        'txtRes.Left
+        'chkSpike.Left
+        'tbSpike.Left
+        'chkAntiSpike.Left
+        'tbAntiSpike.Left
+        'chkAlpha.Left
+        'chkInvert.Left
+        'chkBW.Left
+        'tbBWTH.Left
+        'cmdCreate.Left
+        'cmdCancel.Left
+        'barStatus.Width
+        'barStatus.Top
+        'lblStatus.Top
+        'picSource.Width
+        'picSource.Height
+        'picDest.Width
+        'picDest.Height
+
+    End Sub
 End Class
 
 
